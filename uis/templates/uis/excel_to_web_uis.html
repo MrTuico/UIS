@@ -1,0 +1,1236 @@
+{% extends 'main_base.html' %}
+{% load static %}
+{% block title %}
+Unified Intake Sheet
+{% endblock %}
+{% block content %}
+<style>
+fieldset {
+  background-color: #eeeeee;
+}
+
+legend {
+  background-color: rgb(118, 165, 184);
+  color: white;
+  padding: 2px 5px;
+}
+#scsrForm {
+        display: none;
+    }
+    #mssatForm {
+        display: none;
+    }
+  
+    input[type=text],input[type=number],input[type=date] {
+  width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  box-sizing: border-box;
+  border: none;
+  border-bottom: 2px solid rgb(58, 57, 57);
+}
+
+select{
+  width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  box-sizing: border-box;
+  border: none;
+  border-bottom: 2px solid rgb(58, 57, 57);
+}
+</style>
+<div class="row">
+<div class="col-md-12"> 
+     <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold" style="color: rgb(231, 171, 56)">UNIFIED INTAKE SHEET (ADD)</h6>
+        </div>
+    
+       <div class="card-body">
+        <form onkeydown="return event.key != 'Enter';" action="{% url 'add_uis_excel' %}" method="POST" target="_blank">
+            {% csrf_token %}
+            <div class="row m-2 mb-4">
+                <div class="col-md-6">
+                    <label>Philhealth Identification No.</label>
+                    <input type="text"  class="form-control" oninput="this.value = this.value.toUpperCase()" name="phil_no" value="{{ philhealt_no }}" onclick="clearZeroValue(this)">
+                </div> 
+                <div class="col-md-6">
+                    <label>Hospital No.</label>
+                    <input type="text"  name="hosp_no_excel" class="form-control" value="{{ hospo_no }}">
+                </div> 
+            </div>
+        <fieldset>
+            <legend>INFORMANT</legend>
+        <div class="row m-2">
+            <div class="col-md-6">
+                <label>Date of Intake/Interview:</label>
+                <input type="text" readonly value="{{ date_show }}">
+            </div>
+            <div class="col-md-6">
+                <label>Time of Interview:</label>
+                <input type="text" readonly value="{{ time_show }}">
+            </div>
+            <div class="col-md-6">
+                <label>Name of Informant:</label>
+                <input type="text" value="{{ noi }}" name="noi" id="noi" class="form-control" required oninput="this.value = this.value.toUpperCase()">
+            </div>
+            <div class="col-md-6">
+                <label>Relation to Patient:</label>
+                <input type="text" value="{{ id_rtp }}" name="rtp" id="rtp" class="form-control" required oninput="this.value = this.value.toUpperCase()">
+            </div>
+            <div class="col-md-6">
+                <label>Present Address:</label>
+                <input type="text" name="pa" value="{{ inaddress }}" id="ipa" class="form-control" required oninput="this.value = this.value.toUpperCase()">
+            </div>
+    
+            <div class="col-md-6">
+                <label>Contact Number:</label>
+                <input type="text" name="cnums" value="{{ incnum }}" class="form-control" required>
+            </div>
+            
+        </div>
+      
+        <hr>
+    </fieldset>
+    <fieldset>
+        <legend>I.IDENTIFYING INFORMATION</legend>
+        <div class="row m-2">
+            <div class="col-md-10">
+                <label>Client Name:</label>
+                <input  type="text" name="cn" class="form-control"  id="cn" value="{{ iicname }}" required>
+            </div>
+            <div class="col-md-2">
+                <label>Sex:</label>
+                <input  type="text" name="gender" class="form-control" value="{{ iisex }}" required>
+            </div>
+            <div class="col-md-3">
+                <label>Date of Birth(dd/mm/yyyy):</label>
+                <input type="date" name="bdate" class="form-control" value="{{ iidob|date:'Y-m-d' }}" required>
+            </div>
+            <div class="col-md-3">
+                <label>Age:</label>
+                <input type="text" name="age" value="{{ iiage }}" class="form-control"  required>
+            </div>
+            <div class="col-md-6">
+                <label>Place of Birth:</label>
+                <input type="text" name="pob" class="form-control" value="{{ iipob }}" oninput="this.value = this.value.toUpperCase()">
+            </div>
+            
+            <div class="col-md-12">
+                <label>Permanent Address:</label>
+                <input type="text" name="pea" value="{{ iipa }}" class="form-control" required oninput="this.value = this.value.toUpperCase()">
+            </div>
+            <div class="col-md-12">
+                <label>Present Address:</label>
+                <input type="text" name="pra" value="{{ iipra }}"  id="pra" class="form-control" required oninput="this.value = this.value.toUpperCase()">
+            </div>
+            <div class="col-md-4">
+                <label>Civil Status:</label>
+                <!-- <input type="text" name="cs" value="" class="form-control"> -->
+                <select name="cs" class="form-control" required>
+                    <option value="SINGLE">SINGLE</option>
+                    <option value="MARRIED">MARRIED</option>
+                    <option value="WIDOWED">WIDOWED</option>
+                    <option value="OTHERS">OTHERS</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label>Religion:</label>
+                <input type="text" name="rel" class="form-control" value="{{ iirel }}" required oninput="this.value = this.value.toUpperCase()">
+            </div>
+            <div class="col-md-4">
+                <label>Nationality:</label>
+                <input type="text" name="nat" class="form-control" value="{{ iinat }}" required oninput="this.value = this.value.toUpperCase()">
+            </div>
+        </div>
+        <br>
+        <div class="row m-2">
+           
+            <div class="col-md-3">
+                <label>Highest Educational Attainment:</label>
+                <!-- <input type="text" name="hea" class="form-control" required oninput="this.value = this.value.toUpperCase()"> -->
+                <select name="hea" class="form-control" required>
+                    <option value="NONE">NONE</option>
+                    <option value="POST-GRADUATE">POST-GRADUATE</option>
+                    <option value="COLLEGE">COLLEGE</option>
+                    <option value="HIGH SCHOOL">HIGH SCHOOL</option>
+                    <option value="ELEMENTARY">ELEMENTARY</option>
+                  
+                   
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label>Occupation:</label>
+                <input type="text" name="occu" class="form-control" value="{{ iioccu }}" required oninput="this.value = this.value.toUpperCase()">
+              
+            </div>
+            <div class="col-md-3">
+                <label>Monthly Income:</label>
+                <input type="text" name="mi" class="form-control" id ="get_mi" value="{{ iimi }}" required>
+            </div>
+            <div class="col-md-3">
+                <label>Patient Type:</label>
+                <input type="text" name="pt" class="form-control" value="GENERAL">
+            </div>
+           
+        </div>
+       
+        <hr>
+    
+    </fieldset>
+    <fieldset>
+        <legend>II.FAMILY COMPOSITION</legend>
+        
+        <button type="button" class="btn btn-primary float-right m-2" onclick="verify_category()"><i class="fa fa-thumbs-up">VERIFY</i></button>
+        <button class="btn btn-default float-right m-2"><b><font color="red"><span id="klass"></span></font></b></button>
+        <!-- <input type="text" hidden name="klass" id="type_cat"> -->
+        <a href="#" class="btn btn-success float-left m-2"  data-toggle="modal" data-target="#addfamModal"><i class="fa fa-plus">FAMILY MEMBER</i></a>
+        <a href="#" class="btn btn-warning float-left m-2"  data-toggle="modal" data-target="#addfamosofModal"><i class="fa fa-plus">OTHER SOURCE OF INCOME</i></a>
+
+        <input type="hidden"  name="familycom" class="form-control" id="famcom_data">
+        <input type="hidden" name="familycomosof" class="form-control" id="famcomosof_data">
+        <input type="hidden" id="fam_mi_tot" value="0">
+        <input type="hidden" id="osof_tot" value="0">
+        <input type="hidden" id="row_tot" name="housize" value="0">
+        
+       
+        {% include 'includes/add_family.html' %}
+        {% include 'includes/add_source_of_income.html' %}
+        <br><br>
+            <div class="row m-2">
+                <div class="col-md-12 m-2">
+                <table class="table table-bordered table-hover table-striped" width="100%" cellspacing="0">
+                    <thead>
+                        <th>NAME</th>
+                        <th>SEX</th>
+                        <th>Civil Status</th>
+                        <th>Relation to Patient</th>
+                        <th>Highest Educational Attainment</th>
+                        <th>Occupation</th>
+                        <th>Monthly Income</th>
+                        <th>Age</th>
+                        <!-- <th>Remove</th> -->
+                 
+                    </thead>
+                    <tbody id="tbody">
+                       
+                    </tbody>
+                </table>
+            </div>
+            </div>
+
+            <div class="row m-2">
+                <div class="col-md-12 m-2">
+                <table class="table table-bordered table-hover table-striped" width="100%" cellspacing="0">
+                    <thead>
+                        <th>Other Sources of Income</th>
+                        <th>Amount</th>
+                     
+                    </thead>
+                    <tbody id="tbodyosofi">
+                       
+                    </tbody>
+                </table>
+            </div>
+            </div>
+    </fieldset>
+
+    <fieldset>
+        <legend>III. LIST OF EXPENSES</legend>
+            <div class="row m-2">
+               
+                <div class="col-md-4">
+                    <label>HOUSE:</label>
+                    <select name="le_house" class="form-control" required>
+                        <option {% if house_desc == 'OWNED' %} selected {% endif %} value="OWNED">OWNED</option>
+                        <option {% if house_desc == 'RENTED' %} selected {% endif %} value="RENTED">RENTED</option>
+                        <option {% if house_desc == 'SHARED' %} selected {% endif %} value="SHARED">SHARED</option>
+                        <option {% if house_desc == 'GOVERNMENT' %} selected {% endif %} value="GOVERNMENT">GOVERNMENT</option>
+                        <option {% if house_desc == 'PRIVATE' %} selected {% endif %} value="PRIVATE">PRIVATE</option>
+                        <option {% if house_desc == 'OTHERS' %} selected {% endif %} value="OTHERS">OTHERS</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label>Amount:</label>
+                    <input type="number" class="form-control"  name="le_amt_house" id="exp_house" value="{{ house_amt }}" required>
+                </div>
+
+                <div class="col-md-4">
+                    <label>LOT:</label>
+                    <select name="le_lot" class="form-control" required>
+                        <option {% if lot_desc == 'OWNED' %} selected {% endif %} value="OWNED">OWNED</option>
+                        <option {% if lot_desc == 'GOVERNMENT' %} selected {% endif %} value="GOVERNMENT">GOVERNMENT</option>
+                        <option {% if lot_desc == 'SHARED' %} selected {% endif %} value="SHARED">SHARED</option>
+                        <option {% if lot_desc == 'PRIVATE PROPERTY' %} selected {% endif %} value="PRIVATE PROPERTY">PRIVATE PROPERTY</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label>Amount:</label>
+                    <input type="number" class="form-control" value="{{ lot_amt }}"  name="le_amt_lot" id="exp_lot"  required>
+                  
+
+                </div> 
+                <div class="col-md-12 mt-4">
+                <fieldset>
+                    <legend  style="background-color: rgb(83, 151, 146);">Light Source</legend>
+                    <div class="row">
+                    <div class="col-md-3">
+                    <input type="checkbox" name="elec" {% if liwanag_amt_elec is not None %} checked {% endif %}>ELECTRICITY
+                    <input type="number" class="form-control" name="amt_elec" id="exp_elec" {% if liwanag_amt_elec is not None %} value="{{ liwanag_amt_elec }}" {% else %} value="0" {% endif %} onclick="clearZeroValue(this)" required>
+                    </div>
+                    <div class="col-md-3">
+                        <input type="checkbox" name="kero" {% if liwanag_amt_kero is not None %} checked {% endif %}>KEROSENE
+                        <input type="number" class="form-control" name="amt_kero" id="exp_kero" {% if liwanag_amt_kero is not None %} value="{{ liwanag_amt_kero }}" {% else %} value="0" {% endif %} onclick="clearZeroValue(this)" required>
+                    </div>
+                    <div class="col-md-3">
+                        <input type="checkbox" name="cand" {% if liwanag_amt_candle is not None %} checked {% endif %}>CANDLE
+                        <input type="number" class="form-control" name="amt_cand" id="exp_cand" {% if liwanag_amt_candle is not None %} value="{{ liwanag_amt_candle }}" {% else %} value="0" {% endif %} onclick="clearZeroValue(this)" required>
+                    </div>
+                    <div class="col-md-3">
+                        <input type="checkbox" name="oth" {% if liwanag_amt_others is not None %} checked {% endif %}>OTHERS
+                        <input type="number" class="form-control" name="amt_oth" id="exp_ls_oth" {% if liwanag_amt_others is not None %} value="{{ liwanag_amt_others }}" {% else %} value="0" {% endif %} onclick="clearZeroValue(this)" required>
+                    </div>
+                    </div>
+                </fieldset>
+                </div>
+                <div class="col-md-12 mt-4">
+                    <fieldset>
+                        <legend  style="background-color: rgb(83, 151, 146);">Water Source</legend>
+                        <div class="row">
+                        <div class="col-md-3">
+                        <input type="checkbox" name="pub" {% if tubig_amt_public is not None %} checked {% endif %}>PUBLIC
+                        <input type="number" class="form-control" name="amt_pub" id="exp_public" {% if tubig_amt_public is not None %} value="{{ tubig_amt_public }}" {% else %} value="0" {% endif %} onclick="clearZeroValue(this)" required>
+                        </div>
+                        <div class="col-md-3">
+                            <input type="checkbox" name="natu" {% if tubig_amt_nat is not None %} checked {% endif %}>NATURAL
+                            <input type="number" class="form-control" name="amt_nat" id="exp_nat" {% if tubig_amt_nat is not None %} value="{{ tubig_amt_nat }}" {% else %} value="0" {% endif %} onclick="clearZeroValue(this)" required>
+                        </div>
+                        <div class="col-md-3">
+                            <input type="checkbox" name="wd" {% if tubig_amt_wd is not None %} checked {% endif %}>WATER DISTRICT
+                            <input type="number" class="form-control" id="exp_wd" name="amt_wd" {% if tubig_amt_wd is not None %} value="{{ tubig_amt_wd }}" {% else %} value="0" {% endif %} onclick="clearZeroValue(this)" required>
+                        </div>
+                        <div class="col-md-3">
+                            <input type="checkbox" name="min"{% if tubig_amt_wilkins is not None %} checked {% endif %}>MINERAL/BUY
+                            <input type="number" class="form-control" name="amt_min" id="exp_min" {% if tubig_amt_wilkins is not None %} value="{{ tubig_amt_wilkins }}" {% else %} value="0" {% endif %} onclick="clearZeroValue(this)" required>
+                        </div>
+                        </div>
+                    </fieldset>
+                    </div>
+                    <div class="col-md-12 mt-4">
+                        <fieldset>
+                            <legend  style="background-color: rgb(83, 151, 146);">OTHER EXPENSES</legend>
+                            <div class="row">
+                            <div class="col-md-4">
+                            <input type="checkbox" name="house" {% if excel_househelp is not None %} checked {% elif excel_househelp == 0 %} {% endif %}>HOUSEHELP
+                            <input type="number" class="form-control" {% if excel_househelp is not None %} value="{{ excel_househelp }}" {% else %} value="0" {% endif %} id="exp_househelp" name="amt_house" onclick="clearZeroValue(this)" required>
+                            </div>
+                            <div class="col-md-4">
+                                <input type="checkbox" name="edu" {% if excel_educ is not None %} checked {% endif %}>EDUCATION
+                                <input type="number" class="form-control" {% if excel_educ is not None %} value="{{ excel_educ }}" {% else %} value="0" {% endif %} id="exp_educ" name="amt_edu" onclick="clearZeroValue(this)" required>
+                            </div>
+                            <div class="col-md-4">
+                                <input type="checkbox" name="food" {% if excel_food is not None %} checked {% endif %}>FOOD
+                                <input type="number" class="form-control" {% if excel_food is not None %} value="{{ excel_food }}" {% else %} value="0" {% endif %} id="exp_food" name="amt_food" onclick="clearZeroValue(this)" required>
+                            </div>
+                            
+                            <div class="col-md-4">
+                                <input type="checkbox" name="me" {% if excel_medxp is not None %} checked {% endif %}>MEDICAL EXPENDITURES
+                                <input type="number" class="form-control" id="exp_me" {% if excel_medxp is not None %} value="{{ excel_medxp }}" {% else %} value="0" {% endif %} name="amt_me" onclick="clearZeroValue(this)" required>
+                            </div>
+                            <div class="col-md-4">
+                                <input type="checkbox" name="loan" {% if excel_loan is not None %} checked {% endif %}>LOAN
+                                <input type="number" class="form-control" id="exp_loan" {% if excel_loan is not None %} value="{{ excel_loan }}" {% else %} value="0" {% endif %} name="amt_loan" onclick="clearZeroValue(this)" required>
+                                </div>
+                                <div class="col-md-4">
+                                    <input type="checkbox" name="saving" {% if excel_savings is not None %} checked {% endif %}>SAVINGS
+                                    <input type="number" class="form-control" id="exp_saving" {% if excel_savings is not None %} value="{{ excel_savings }}" {% else %} value="0" {% endif %} name="amt_saving" onclick="clearZeroValue(this)" required>
+                                </div>
+                                <div class="col-md-4">
+                                    <input type="checkbox" name="ip" {% if excel_inpr is not None %} checked {% endif %}>INSURANCE PREMIUM
+                                    <input type="number" class="form-control" id="exp_ip" {% if excel_inpr is not None %} value="{{ excel_inpr }}" {% else %} value="0" {% endif %} name="amt_ip" onclick="clearZeroValue(this)" required>
+                                </div>
+                                <div class="col-md-4">
+                                    <input type="checkbox" name="transpo" {% if excel_trans is not None %} checked {% endif %}>TRANSPORTATION
+                                    <input type="number" class="form-control" id="exp_transpo" {% if excel_trans is not None %} value="{{ excel_trans }}" {% else %} value="0" {% endif %} name="amt_transpo" onclick="clearZeroValue(this)" required>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <input type="checkbox" name="other" {% if excel_oth is not None %} checked {% endif %}>OTHERS
+                                        <input type="text" class="form-control" id="exp_oth" {% if excel_oth is not None %} value="{{ excel_oth }}" {% else %} value="0" {% endif %} name="amt_other" onclick="clearZeroValue(this)" required>
+                                    </div>
+                            </div>
+                        </fieldset>
+                        <div class="row m-2">
+                        <div class="col-md-6">
+                            <label title="CLICK ME TO GET THE TOTAL EXPENSE" onclick="get_total_expenses()"><b><font color="red">TOTAL EXPENSES:</font></b></label>
+                            <input title="CLICK ME TO GET THE TOTAL EXPENSE" onclick="get_total_expenses()" title="TOTAL EXPENSES" type="text" name="tot_expense" value="0"  id ="tot_exps" class="form-control">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label><b><font color="red">TOTAL INCOME:</font></b></label>
+                            <input title="TOTAL Income" type="text" name="tot_income" id ="tot_incomes" class="form-control" value="0">
+                        </div>
+                    </div>
+
+                 </div>       
+            </div>          
+    </fieldset>
+    <fieldset>
+        <legend>IV. PROBLEM PRESENTED (Problemang Idinulog)</legend>
+            <div class="row m-2">
+                <div class="col-md-4">
+                <input type="checkbox" name="hcop" {% if excel_hcop is not None %} checked {% endif %}>HEALTH CONDITION OF PATIENT(specify)
+                <input type="text" {% if excel_hcop is not None %} value="{{ excel_hcop }}" {% else %} value="" {% endif %} oninput="this.value = this.value.toUpperCase()" id="comaR" class="form-control" name="hcop_desc">
+                </div>
+                <div class="col-md-4">
+                <input type="checkbox" name="fn" {% if excel_fn is not None %} checked {% endif %}>FOOD/NUTRITION (specify)
+                <input type="text" {% if excel_fn is not None %} value="{{ excel_fn }}" {% else %} value="" {% endif %} oninput="this.value = this.value.toUpperCase()" class="form-control" name="fn_desc">
+                </div>
+                <div class="col-md-4">
+                <input type="checkbox" name="emp" {% if excel_emp is not None %} checked {% endif %}>EMPLOYMENT (specify)
+                <input type="text" {% if excel_emp is not None %} value="{{ excel_emp }}" {% else %} value="" {% endif %} oninput="this.value = this.value.toUpperCase()" class="form-control" name="emp_desc">
+                </div>
+            </div>
+            <div class="row m-2">
+                <div class="col-md-4">
+                <input type="checkbox" name="ers" {% if excel_ecosrc is not None %} checked {% endif %}>ECONOMIC RESOURCES (specify)
+                <input type="text" {% if excel_ecosrc is not None %} value="{{ excel_ecosrc }}" {% else %} value="" {% endif %} oninput="this.value = this.value.toUpperCase()" class="form-control" name="ers_desc">
+                </div>
+                <div class="col-md-4">
+                <input type="checkbox" name="hs" {% if excel_hawsing is not None %} checked {% endif %}>HOUSING (specify)
+                <input type="text" {% if excel_hawsing is not None %} value="{{ excel_hawsing }}" {% else %} value="" {% endif %} oninput="this.value = this.value.toUpperCase()" class="form-control" name="hs_desc">
+                </div>
+                <div class="col-md-4">
+                <input type="checkbox" {% if excel_ader is not None %} checked {% endif %} name="osy">OTHERS (specify)
+                <input type="text" {% if excel_ader is not None %} value="{{ excel_ader }}" {% else %} value="" {% endif %} oninput="this.value = this.value.toUpperCase()" value="{{ toecode }}" class="form-control" name="osy_desc">
+                </div>
+            </div>
+            <hr>
+    </fieldset>
+    <fieldset>
+        <legend>V. SOCIAL WORKER'S ASSESSMENT (Pagtatasa ng Social Worker)</legend>
+            <div class="row m-2">
+                <div class="col-md-8 mb-3">
+                    <label>Chief Complain</label>
+                    <input type="text" value="{{ complain }}" class="form-control">
+                </div> 
+
+                <div class="col-md-4 mb-3">
+                    <label>RE-CLASSIFICATION</label>
+                    <select type="text" name="klass" class="form-control" id="f_klass">
+                    <option value="B">B</option>
+                    <option value="C1">C1</option>
+                    <option value="C2">C2</option>
+                    <option value="C3">C3</option>
+                </select>
+                </div> 
+                <div class="col-md-12">
+                    <textarea spellcheck="true" name="swa" id="" class="form-control"  rows="7" oninput="this.value = this.value.toUpperCase()" required>{{ swa }}</textarea>
+                </div>
+            </div>
+    </fieldset>
+
+    <fieldset>
+        <legend>VI. RECOMMENDATIONS (Rekomendasyon)</legend>
+        <a href="#" class="btn btn-success float-right m-2"  data-toggle="modal" data-target="#recomModal">ADD</a>
+        <input type="hidden" class="form-control" name="reccomdata" id="reccom_data">
+        {% include 'includes/reccomendations.html' %}
+        <br><br>
+            <div class="row m-2">
+                <div class="col-md-12">
+                  <table class="table table-bordered table-hover table-striped"  width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>TYPE OF ASSISTANCE</th>
+                            <th>AMOUNT OF ASSISTANCE</th>
+                            <th>MODE OF ASSISTANCE</th>
+                            <th>FUND SOURCE</th>
+                        </tr>
+                    </thead>
+                    <tbody id="rtbody">
+                    </tbody>
+                  </table>
+
+                </div>
+            </div>
+    </fieldset>
+    <hr>
+    <fieldset>
+        <legend><input type="checkbox" style="height: 20px;width: 20px;" id="scsr" name="scsrcheck"> SOCIAL CASE STUDY REPORT </legend>
+        <div id="scsrForm">
+        <fieldset >
+            <div class="row m-4">
+                <div class="col-md-6">
+                    <label>EMPLOYER:</label>
+                    <input type="text" name="employer" oninput="this.value = this.value.toUpperCase()" class="form-control" value="NONE" onclick="clearZeroValue(this)">
+                </div>
+                <div class="col-md-6">
+                    <label>SPECIAL SKILL:</label>
+                    <input type="text" name="skill" oninput="this.value = this.value.toUpperCase()" class="form-control" value ="NONE" onclick="clearZeroValue(this)">
+                </div>
+                <div class="col-md-4">
+                    <label>DATE OF ADMISSION:(dd/mm/yyyy)</label>
+                    <input type="date" name="doa" class="form-control" value="{{ date_today }}">
+                </div>
+                <div class="col-md-4">
+                    <label>ROOM IN DATE AND TIME:</label>
+                    <input type="text" name="ridat" value="{{ date_today }}" oninput="this.value = this.value.toUpperCase()" class="form-control">
+                </div>
+                <div class="col-md-4">
+                    <label>TYPE OF DEFORMITY/DISABILITY:</label>
+                    <input type="text" name="tdd" oninput="this.value = this.value.toUpperCase()" class="form-control" value ="NONE" onclick="clearZeroValue(this)">
+                </div>
+            </div>
+            <hr>
+        </fieldset>
+       
+    
+        <fieldset>
+                <div class="row m-2">
+                    <div class="col-md-12">
+                    <fieldset>
+                        <legend  style="background-color: rgb(83, 151, 146);">HOUSING MATERIAL</legend>
+                        <div class="row">
+                        <div class="col-md-4">
+                        <input type="checkbox" name="ln">LIGHT/NATIVE
+                        </div>
+                        <div class="col-md-4">
+                            <input type="checkbox" name="conc">CONCRETE
+                        </div>
+                        <div class="col-md-4">
+                            <input type="checkbox" name="mix">MIXED
+                        </div>
+                        </div>
+                    </fieldset>
+                    </div>
+                    <div class="col-md-12 mt-4">
+                        <fieldset>
+                            <legend  style="background-color: rgb(83, 151, 146);">FUEL SOURCE</legend>
+                            <div class="row">
+                            <div class="col-md-3">
+                            <input type="checkbox" name="lpg">LPG
+                         
+                            </div>
+                            <div class="col-md-3">
+                                <input type="checkbox" name="elec">ELECTRIC
+                             
+                            </div>
+                            <div class="col-md-3">
+                                <input type="checkbox" name="char">CHARCOAL
+                       
+                            </div>
+                            <div class="col-md-3">
+                                <input type="checkbox" name="fwood">FIREWOOD
+                      
+                            </div>
+                            </div>
+                        </fieldset>
+                        </div>
+                        <div class="col-md-12 mt-4">
+    
+                     </div>       
+                </div>          
+        </fieldset>
+      <hr>
+        <fieldset>
+                <div class="row m-2">
+                    <div class="col-md-12">
+                        <label>Problem Presented</label>
+                        <textarea name="pr" id="" class="form-control"  rows="5" oninput="this.value = this.value.toUpperCase()"></textarea>
+                    </div>
+                </div>
+        </fieldset>
+    </div>
+        </fieldset>
+   
+    </fieldset>
+    <hr>
+    <fieldset>
+        <legend><input type="checkbox" style="height: 20px;width: 20px;" id="mssat" name="mssatcheck"> MEDICAL SOCIAL SERVICE ASSESSMENT TOOL </legend>
+        <div id="mssatForm">
+        <fieldset>
+          
+            <div class="row m-4">
+                <legend>DEMOGRAPHIC DATA</legend>
+                <div class="col-md-3">
+                    <label>DATE OF ADMISSION/CONSULTATION:</label>
+                    <input type="date" name="doac" class="form-control" value="{{ date_today }}">
+                </div>
+                <div class="col-md-3">
+                    <label>BASIC WARD/(specify):</label>
+                    <input type="text" name="basic_ward" class="form-control" value="NONE" onclick="clearZeroValue(this)">
+                </div>
+                <div class="col-md-3">
+                    <label>NON BASIC WARD(specify):</label>
+                    <input type="text" name="non_basic" class="form-control" value ="NONE" onclick="clearZeroValue(this)" >
+                </div>
+                <div class="col-md-3">
+                    <label>MSS NO::</label>
+                    <input type="text" name="mss_no" class="form-control" value="{{ mms_no_auto }}" >
+                </div>
+                <div class="col-md-3">
+                    <label>SOURCE OF REFERRAL NAME:</label>
+                    <input type="text" name="src_referal_name" class="form-control" value ="NONE" onclick="clearZeroValue(this)">
+                </div>
+                <div class="col-md-3">
+                    <label>CONTACT NUMBER:</label>
+                    <input type="text" name="cnum" class="form-control" value ="NONE" onclick="clearZeroValue(this)">
+                </div>
+                <div class="col-md-6">
+                    <label>ADDRESS:</label>
+                    <input type="text" name="address" class="form-control" value ="NONE" onclick="clearZeroValue(this)">
+                </div>
+                <div class="col-md-3">
+                    <label>EMPLOYER:</label>
+                    <input type="text" name="employer" class="form-control" value ="NONE" onclick="clearZeroValue(this)">
+                </div>
+                <div class="col-md-3">
+                    <label>TYLE OF LIVING ARRANGEMENT:</label>
+                   <select name="tla" class="form-control">
+                    <option value="NONE">NONE</option>
+                    <option value="OWNED">OWNED</option>
+                    <option value="RENT">RENT</option>
+                    <option value="SHARED">SHARED</option>
+                    <option value="PRIVATE">PRIVATE</option>
+                    <option value="INSTITUTION">INSTITUTION</option>
+                    <option value="HOMELESS">HOMELESS</option>
+                   </select>
+                </div>
+                <div class="col-md-3">
+                    <label>PHILHEALTH MEMBERSHIP:</label>
+                   <select name="phil_mem" class="form-control">
+                    <option value="DIRECT">DIRECT</option>
+                    <option value="INDIRECT">INDIRECT</option>
+                   </select>
+                </div>
+                <div class="col-md-3">
+                    <label>MSWD CLASSIFICATION:</label>
+                   <select name="mswd_cassif" class="form-control">
+                    <option value="FINANCIALLY CAPABLE">FINANCIALLY CAPABLE</option>
+                    <option value="FINANCIALLY INCAPABLE">FINANCIALLY INCAPABLE</option>
+                   </select>
+                </div>
+            </div>
+            <hr>
+        </fieldset>
+       
+    
+        <fieldset>
+      
+                <div class="row m-2">
+                   
+                        <div class="col-md-6">
+                            <label>MARGINALIZED SECTORAL MEMBERSHIP:</label>
+                           <select name="marginalized_sec_mem" class="form-control">
+                            <option value="ARTISANAL FISHERFOLK">ARTISANAL FISHERFOLK</option>
+                            <option value="FARMERS AND LANDLESS RURAL WORKERS">FARMERS AND LANDLESS RURAL WORKERS</option>
+                            <option value="INDIGENOUS PEOPLE">INDIGENOUS PEOPLE</option>
+                            <option value="FORMAL AND LABOR MIGRANT WORKERS">FORMAL AND LABOR MIGRANT WORKERS</option>
+                            <option value="WORKERS IN INFORMAL SECTORS">WORKERS IN INFORMAL SECTORS</option>
+                            <option value="SENIOR CITIZEN">SENIOR CITIZEN</option>
+                            <option value="PWD">PWD</option>
+                            <option value="VICTIMS OF DISASTERS AND CALAMTIES">VICTIMS OF DISASTERS AND CALAMTIES</option>
+                            <option value="URBAN POOR">URBAN POOR</option>
+                            <option value="OTHERS">OTHERS</option>
+                           </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label>CLOTHING:</label>
+                         <input type="number" name="clothing_amt" class="form-control" value="0" onclick="clearZeroValue(this)">
+                        </div>
+         
+                    <div class="col-md-12 mt-4">
+                        <fieldset>
+                            <legend  style="background-color: rgb(83, 151, 146);">FUEL SOURCE</legend>
+                            <div class="row">
+                            <div class="col-md-3">
+                            <input type="checkbox" name="lpg">LPG
+                            <input type="number" class="form-control" name="amt_lpg"  value="0" onclick="clearZeroValue(this)">
+                            </div>
+                            <div class="col-md-3">
+                                <input type="checkbox" name="elec">ELECTRIC
+                                <input type="number" class="form-control" name="m_amt_elec"  value="0" onclick="clearZeroValue(this)">
+                            </div>
+                            <div class="col-md-3">
+                                <input type="checkbox" name="char">CHARCOAL
+                                <input type="number" class="form-control" name="amt_char"  value="0" onclick="clearZeroValue(this)">
+                            </div>
+                            <div class="col-md-3">
+                                <input type="checkbox" name="fwood">FIREWOOD
+                                <input type="number" class="form-control" name="amt_fwood"  value="0" onclick="clearZeroValue(this)">
+                            </div>
+                            </div>
+                        </fieldset>
+                        </div>
+                        <div class="col-md-12 mt-4">
+    
+                     </div>       
+                </div>          
+        </fieldset>
+      
+        <fieldset>
+      
+                <div class="row m-2">
+                  
+                    <div class="col-md-4">
+                        <label>DURATION OF PROBLEM/SYMPTOMS:</label>
+                        <input type="text" class="form-control" name="duration_of_prob" value="NONE" onclick="clearZeroValue(this)">
+                    </div>
+    
+                    <div class="col-md-4">
+                        <label>PREVIOUS TREATMENT/DURATION:</label>
+                        <input type="text" class="form-control" name="prev_treatment" value="NONE" onclick="clearZeroValue(this)">
+                    </div>
+    
+                    <div class="col-md-4">
+                        <label>HEALTH ACCESSIBILITYA PROBLEM:</label>
+                        <input type="text" class="form-control" name="health_accessibility_prob" value="NONE" onclick="clearZeroValue(this)">
+                    </div>
+                </div>
+        </fieldset>
+    </div>
+        </fieldset>
+    </fieldset>
+    <hr>
+    <div class="col-md-12">
+        <h4 class="float-right"><font color="red"> Always click the VERIFY BUTTON before saving UIS file. Thank you!</font></h4>
+        <hr>
+    </div>
+       
+        <br>
+    <!-- <button style="color: rgb(231, 171, 56)" class="btn btn-success text-white float-right m-2">PRINT UIS</button> -->
+    <button type="submit" style="color: rgb(231, 171, 56)" class="btn btn-warning text-white float-right m-2">SAVE</button>
+
+</div>
+</form>
+</div>
+</div>
+</div> 
+
+<script>
+    document.getElementById('scsr').addEventListener('click', function() {
+        var form = document.getElementById('scsrForm');
+       
+        if (form.style.display === 'block') {
+            form.style.display = 'none';
+          
+        } else {
+            form.style.display = 'block';
+           
+        }
+    });
+
+    document.getElementById('mssat').addEventListener('click', function() {
+        var sform = document.getElementById('mssatForm');
+       
+        if (sform.style.display === 'block') {
+            sform.style.display = 'none';
+          
+        } else {
+            sform.style.display = 'block';
+           
+        }
+    });
+</script>
+<script>
+    family_composition = []
+    recommendations = []
+    famcom_set_of_data = []
+    reccom_set_of_data = []
+    famcom_osof = []
+    famcomosof_set_of_data = []
+    set_of_mi = []
+    set_of_mi_osof = []
+
+    function delArray(num){
+        family_composition.splice(num,1);
+        const outputDiv = document.getElementById('tbody');
+        outputDiv.innerHTML = ''; // Clear previous content
+        document.getElementById('famcom_data').value='';
+        document.getElementById('fam_mi_tot').value = 0;
+        document.getElementById('row_tot').value = 0;
+        set_of_mi = []
+        famcom_set_of_data = []
+        function updateuis(){
+            let new_family_composition = family_composition
+            // console.log(new_family_composition)
+            new_family_composition.forEach((data,index) => {
+            cname = data[0];
+            gender = data[1];
+            cstat = data[2];
+            rtp = data[3];
+            hea = data[4];
+            occu = data[5];
+            mi = data[6];
+            fage = data[7]
+            k =index;
+
+            var row_num = k + 1
+            document.getElementById('row_tot').value = row_num;
+
+            set_of_mi.push(parseFloat(mi))
+            total_sum_mi = 0
+            for (let q = 0; q < set_of_mi.length; q++) {
+            total_sum_mi += set_of_mi[q];
+             // console.log(total_sum_mi)
+            document.getElementById('fam_mi_tot').value = total_sum_mi;
+        }
+
+            famcomDataArray = {cname,gender,cstat,rtp,hea,occu,mi,fage}
+            famcom_set_of_data.push(famcomDataArray);
+            let famsArray = JSON.stringify(famcom_set_of_data);
+            document.getElementById('famcom_data').value = famsArray;
+            });
+            
+            // console.log(new_family_composition)
+
+            var tbody = document.getElementById('tbody');
+            tbody.innerHTML = ''
+            for (var i = 0; i < new_family_composition.length; i++) {
+            var row = document.createElement('tr');
+            for (var j = 0; j < new_family_composition[i].length; j++) {
+            var cell = document.createElement('td');
+            cell.textContent = new_family_composition[i][j];
+            row.appendChild(cell);
+        
+        } 
+        var deleteButtonCell = document.createElement('td');
+        var deleteButton = document.createElement('i');
+        deleteButton.className = 'fa fa-trash';
+        deleteButton.setAttribute('onclick', 'delArray("' + i + '")');
+
+        deleteButtonCell.appendChild(deleteButton);
+        row.appendChild(deleteButtonCell);
+        tbody.appendChild(row);
+        
+        }
+
+        }
+        updateuis();
+    }
+    
+    function add_famcom(){
+        var cname = document.getElementById('cname').value || '';
+        var gender = document.getElementById('mgender').value || '';
+        var cstat = document.getElementById('mcstat').value || '';
+        var rtp = document.getElementById('mrtp').value || '';
+        var hea = document.getElementById('mhea').value || '';
+        var occu = document.getElementById('moccu').value || '';
+        var mi = document.getElementById('mim').value || '';
+        var fage = document.getElementById('mage').value || '';
+
+        famArray = [cname,gender,cstat,rtp,hea,occu,mi,fage];
+        family_composition.push(famArray);
+        // console.log(family_composition);
+        family_composition.forEach((data,index) => {
+        cname = data[0];
+        gender = data[1];
+        cstat = data[2];
+        rtp = data[3];
+        hea = data[4];
+        occu = data[5];
+        mi = data[6];
+        fage = data[7]
+        kk =index;
+    });
+   var row_num = kk + 1
+    document.getElementById('row_tot').value = row_num;
+    
+    var tbody = document.getElementById('tbody');
+    tbody.innerHTML = ''
+    for (var i = 0; i < family_composition.length; i++) {
+        var row = document.createElement('tr');
+        for (var j = 0; j < family_composition[i].length; j++) {
+            var cell = document.createElement('td');
+            cell.textContent = family_composition[i][j];
+            row.appendChild(cell);
+        
+        } 
+    var deleteButtonCell = document.createElement('td');
+    var deleteButton = document.createElement('i');
+    deleteButton.className = 'fa fa-trash';
+    deleteButton.setAttribute('onclick', 'delArray("' + i + '")');
+
+    deleteButtonCell.appendChild(deleteButton);
+    row.appendChild(deleteButtonCell);
+    tbody.appendChild(row);
+    }
+    set_of_mi.push(parseFloat(mi))
+    total_sum_mi = 0
+    for (let q = 0; q < set_of_mi.length; q++) {
+        total_sum_mi += set_of_mi[q];
+        // console.log(total_sum_mi)
+        document.getElementById('fam_mi_tot').value = total_sum_mi;
+        }
+    function clear_inputs(){
+        document.getElementById('cname').value = '';
+        document.getElementById('mrtp').value = '';
+        document.getElementById('mhea').value = '';
+        document.getElementById('moccu').value = 'NONE';
+        document.getElementById('mage').value = 0;
+        document.getElementById('mim').value = 0;
+        }
+clear_inputs();  
+
+        famcomDataArray = {cname,gender,cstat,rtp,hea,occu,mi,fage}
+        famcom_set_of_data.push(famcomDataArray);
+        let famsArray = JSON.stringify(famcom_set_of_data);
+        document.getElementById('famcom_data').value = famsArray;
+    }
+
+    function delArrayreccom(no){
+        recommendations.splice(no,1);
+        const outputDiv = document.getElementById('rtbody');
+        outputDiv.innerHTML = ''; // Clear previous content
+        document.getElementById('reccom_data').value='';
+        reccom_set_of_data = []
+    function updatereccom(){
+            let new_recommendations = recommendations
+            new_recommendations.forEach((data,index) => {
+            mtoa = data[0];
+            maos = data[1];
+            mmoa = data[2];
+            mfs = data[3];
+            q =index;  
+            
+        reccomDataArray = {mtoa,maos,mmoa,mfs}
+        reccom_set_of_data.push(reccomDataArray);
+        let recArray = JSON.stringify(reccom_set_of_data);
+        document.getElementById('reccom_data').value = recArray;
+
+    });
+
+    var rtbody = document.getElementById('rtbody');
+    rtbody.innerHTML = ''
+    for (var i = 0; i < recommendations.length; i++) {
+        var row = document.createElement('tr');
+        for (var j = 0; j < recommendations[i].length; j++) {
+            var cell = document.createElement('td');
+            cell.textContent = recommendations[i][j];
+            row.appendChild(cell);
+        } 
+        var deleteButtonCell = document.createElement('td');
+        var deleteButton = document.createElement('i');
+        deleteButton.className = 'fa fa-trash';
+        deleteButton.setAttribute('onclick', 'delArrayreccom("' + i + '")');
+
+        deleteButtonCell.appendChild(deleteButton);
+        row.appendChild(deleteButtonCell);
+        rtbody.appendChild(row);
+     
+
+    }
+        }
+        updatereccom();
+    }
+
+    function add_reccom(){
+        var mtoa = document.getElementById('mtoa').value || '';
+        var maos = parseFloat(document.getElementById('maos').value || 0);
+        var mmoa = document.getElementById('mmoa').value || '';
+        var mfs = document.getElementById('mfs').value || '';
+        var get_klass = document.getElementById('f_klass').value || '';
+        let f_maos = parseFloat(0)
+        
+        var checkbox = document.getElementById('show_res');
+        if (checkbox.checked) {
+          f_maos = maos
+         } else {
+            if(get_klass === 'B'){
+            f_maos = maos
+                }else if(get_klass === 'C1'){
+                     f_maos = maos * 0.5
+             }else if(get_klass === 'C2'){
+                    f_maos = maos * 0.75
+                }else if(get_klass === 'C3'){
+                 f_maos = maos
+                 }else{
+                      f_maos = maos
+        }
+  }
+       
+        // let aos = parseFloat(f_maos.toFixed(2));
+        reccomArray = [mtoa,f_maos,mmoa,mfs];
+        recommendations.push(reccomArray);
+        recommendations.forEach((data,index) => {
+        mtoa = data[0];
+        maos = data[1];
+        mmoa = data[2];
+        mfs = data[3];
+        q =index;  
+
+
+    });
+
+    var rtbody = document.getElementById('rtbody');
+    rtbody.innerHTML = ''
+    for (var i = 0; i < recommendations.length; i++) {
+        var row = document.createElement('tr');
+        for (var j = 0; j < recommendations[i].length; j++) {
+            var cell = document.createElement('td');
+            cell.textContent = recommendations[i][j];
+            row.appendChild(cell);
+        } 
+        var deleteButtonCell = document.createElement('td');
+        var deleteButton = document.createElement('i');
+        deleteButton.className = 'fa fa-trash';
+        deleteButton.setAttribute('onclick', 'delArrayreccom("' + i + '")');
+
+        deleteButtonCell.appendChild(deleteButton);
+        row.appendChild(deleteButtonCell);
+        rtbody.appendChild(row);
+     
+
+    }
+
+    function clear_input(){
+       
+        document.getElementById('maos').value = '';
+        document.getElementById('mmoa').value = '';
+        // document.getElementById('mfs').value = '';
+        
+        }
+        clear_input();  
+
+        reccomDataArray = {mtoa,maos,mmoa,mfs}
+        reccom_set_of_data.push(reccomDataArray);
+        let recArray = JSON.stringify(reccom_set_of_data);
+        document.getElementById('reccom_data').value = recArray;       
+    }
+
+    function delArrayosof(qwe){
+        famcom_osof.splice(qwe,1);
+        const outputDiv = document.getElementById('tbodyosofi');
+        outputDiv.innerHTML = ''; // Clear previous content
+        document.getElementById('famcomosof_data').value='';
+        document.getElementById('osof_tot').value = 0;
+        famcomosof_set_of_data = []
+        set_of_mi_osof = []
+    function updateosof(){
+            let new_famcom_osof = famcom_osof
+            new_famcom_osof.forEach((data,index) => {
+            desc_osof = data[0];
+            amt_osof = data[1];
+            m =index;
+    
+    var d = 0
+    if(desc_osof === 'CCT'){
+             d = amt_osof/2
+            }else{
+              d = amt_osof
+            }
+    set_of_mi_osof.push(parseFloat(d))
+    total_sum_mi_osof = 0
+    for (let b = 0; b < set_of_mi_osof.length; b++) {
+            total_sum_mi_osof += set_of_mi_osof[b];
+            console.log(total_sum_mi_osof)
+            document.getElementById('osof_tot').value = total_sum_mi_osof
+            }
+
+            famcomosofDataArray = {desc_osof,amt_osof}
+        famcomosof_set_of_data.push(famcomosofDataArray);
+        let famsosofArray = JSON.stringify(famcomosof_set_of_data);
+        document.getElementById('famcomosof_data').value = famsosofArray;
+
+    });
+
+    var tbody = document.getElementById('tbodyosofi');
+        tbody.innerHTML = ''
+        for (var i = 0; i < famcom_osof.length; i++) {
+        var row = document.createElement('tr');
+        for (var j = 0; j < famcom_osof[i].length; j++) {
+            var cell = document.createElement('td');
+            cell.textContent = famcom_osof[i][j];
+            row.appendChild(cell);
+        }
+        var deleteButtonCell = document.createElement('td');
+        var deleteButton = document.createElement('i');
+        deleteButton.className = 'fa fa-trash';
+        deleteButton.setAttribute('onclick', 'delArrayosof("' + i + '")');
+
+        deleteButtonCell.appendChild(deleteButton);
+        row.appendChild(deleteButtonCell);
+        tbody.appendChild(row);
+
+    }
+        }
+        updateosof();
+    }
+
+    function add_famcomosof(){
+        var desc_osof = document.getElementById('desc_osof').value || '';
+        var amt_osof= document.getElementById('amt_osof').value || '';
+
+        fcosofArray =[desc_osof,amt_osof];
+        famcom_osof.push(fcosofArray);
+        famcom_osof.forEach((data,index) => {
+        desc_osof = data[0];
+        amt_osof = data[1];
+        m =index;
+    });
+
+        var tbody = document.getElementById('tbodyosofi');
+        tbody.innerHTML = ''
+        for (var i = 0; i < famcom_osof.length; i++) {
+        var row = document.createElement('tr');
+        for (var j = 0; j < famcom_osof[i].length; j++) {
+            var cell = document.createElement('td');
+            cell.textContent = famcom_osof[i][j];
+            row.appendChild(cell);
+        }
+        var deleteButtonCell = document.createElement('td');
+        var deleteButton = document.createElement('i');
+        deleteButton.className = 'fa fa-trash';
+        deleteButton.setAttribute('onclick', 'delArrayosof("' + i + '")');
+
+        deleteButtonCell.appendChild(deleteButton);
+        row.appendChild(deleteButtonCell);
+        tbody.appendChild(row);
+    }
+    var d = 0
+    if(desc_osof === 'CCT'){
+             d = amt_osof/2
+            }else{
+              d = amt_osof
+            }
+    set_of_mi_osof.push(parseFloat(d))
+    total_sum_mi_osof = 0
+    for (let b = 0; b < set_of_mi_osof.length; b++) {
+            total_sum_mi_osof += set_of_mi_osof[b];
+            console.log(total_sum_mi_osof)
+            document.getElementById('osof_tot').value = total_sum_mi_osof
+            }
+            
+    function clear_input(){
+        document.getElementById('desc_osof').value = '';
+        document.getElementById('amt_osof').value = 0;
+        }
+        clear_input();  
+
+        famcomosofDataArray = {desc_osof,amt_osof}
+        famcomosof_set_of_data.push(famcomosofDataArray);
+        let famsosofArray = JSON.stringify(famcomosof_set_of_data);
+        document.getElementById('famcomosof_data').value = famsosofArray;
+
+    }
+
+    function verify_category(){
+        let total_mi =0
+        var pat_mi = parseFloat(document.getElementById('get_mi').value || 0);
+        var fam_mi = parseFloat(document.getElementById('fam_mi_tot').value || 0);
+        var other_mi = parseFloat(document.getElementById('osof_tot').value || 0);
+        var tot_row =parseFloat(document.getElementById('row_tot').value);
+        
+        tot_incomes = pat_mi + fam_mi + other_mi
+        document.getElementById('tot_incomes').value = tot_incomes
+        total_mi = (pat_mi + fam_mi + other_mi)/(tot_row + 1)
+        // console.log(total_mi)
+
+        if(total_mi <= 2891){
+            klass = "C3" 
+        }else if(total_mi >= 2892 && total_mi <= 3717){
+            klass ="C2"
+        }else if(total_mi >= 3718 && total_mi <=4543){
+            klass="C1"
+        }else if(total_mi >= 4554){
+            klass = "B"
+        }else{
+            klass = "?"
+        }
+        // console.log(klass)
+        document.getElementById('klass').textContent = klass;
+          // document.getElementById('type_cat').value = klass;
+        var auto_select_klass = document.getElementById('f_klass');
+        for (var i = 0; i < auto_select_klass.options.length; i++) {
+        if (auto_select_klass.options[i].value === klass) {
+            auto_select_klass.selectedIndex = i;
+            break; 
+        }
+    }
+
+        function replaceCommas() {
+    // Get the input field
+    var inputField = document.getElementById("comaR");
+    var originalValue = inputField.value;
+    var replacedValue = originalValue.replace(/,/g, ";");
+    inputField.value = replacedValue;
+    }
+    replaceCommas();
+    }
+
+    function get_total_expenses(){
+        let exp_total = 0
+        var house = parseFloat(document.getElementById('exp_house').value || 0)
+        var lot = parseFloat(document.getElementById('exp_lot').value || 0)
+        var elec = parseFloat(document.getElementById('exp_elec').value || 0)
+        var kero = parseFloat(document.getElementById('exp_kero').value || 0)
+        var cand = parseFloat(document.getElementById('exp_cand').value || 0)
+        var ls_others = parseFloat(document.getElementById('exp_ls_oth').value || 0)
+        var public = parseFloat(document.getElementById('exp_public').value || 0)
+        var natural = parseFloat(document.getElementById('exp_nat').value || 0)
+        var wd = parseFloat(document.getElementById('exp_wd').value || 0)
+        var mineral = parseFloat(document.getElementById('exp_min').value || 0)
+        var househelp = parseFloat(document.getElementById('exp_househelp').value || 0)
+        var education = parseFloat(document.getElementById('exp_educ').value || 0)
+        var food = parseFloat(document.getElementById('exp_food').value || 0)
+        var medexp = parseFloat(document.getElementById('exp_me').value || 0)
+        var loan = parseFloat(document.getElementById('exp_loan').value || 0)
+        var saving = parseFloat(document.getElementById('exp_saving').value || 0)
+        var ip = parseFloat(document.getElementById('exp_ip').value || 0)
+        var transpo = parseFloat(document.getElementById('exp_transpo').value || 0)
+        var oth = parseFloat(document.getElementById('exp_oth').value || 0)
+
+        exp_total = house + lot + elec + kero + cand + ls_others + public + natural + wd + mineral + househelp + education + food + medexp + loan + saving + ip + transpo + oth
+        document.getElementById('tot_exps').value = exp_total
+        console.log(exp_total)
+    }
+
+</script>
+
+<script>
+    function clearZeroValue(field) {
+    if (field.value === "0") {
+        field.value = "";
+    }else if(field.value === "NONE"){
+        field.value = "";
+    }
+        }
+
+    </script>
+
+    <script>
+   function fillInputFields(span){
+    var row = span.closest("tr");
+    // var srow = span.parentNode.parentNode;
+    var cname = row.cells[0].textContent;
+    var gender = row.cells[1].textContent;
+    var cstat = row.cells[2].textContent;
+    var rtp = row.cells[3].textContent;
+    var hea = row.cells[4].textContent;
+    var occu = row.cells[5].textContent;
+    var mi = row.cells[6].textContent;
+    document.getElementById("cname").value = cname;
+    document.getElementById("mcstat").value = cstat;
+    document.getElementById("mgender").value = gender;
+    document.getElementById("mrtp").value = rtp;
+    document.getElementById("mhea").value = hea;
+    document.getElementById("moccu").value = occu;
+    document.getElementById("mim").value = mi;
+   
+}
+
+function fillInputFields_osof(span){
+     var row = span.closest("tr");
+     // var srow = span.parentNode.parentNode;
+     var osof = row.cells[0].textContent;
+     var osof_amt = row.cells[1].textContent;
+    
+     document.getElementById("desc_osof").value = osof;
+     document.getElementById("amt_osof").value = osof_amt;
+    
+    
+ }
+ 
+
+
+</script>
+{% endblock %}

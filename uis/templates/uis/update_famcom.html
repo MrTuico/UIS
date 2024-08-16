@@ -1,0 +1,136 @@
+{% extends 'main_base.html' %}
+{% load static %}
+{% block title %}
+Unified Intake Sheet
+{% endblock %}
+{% block content %}
+<style>
+fieldset {
+  background-color: #eeeeee;
+}
+
+legend {
+  background-color: rgb(118, 165, 184);
+  color: white;
+  padding: 2px 5px;
+}
+.alert {
+    padding: 15px;
+    background-color: #cb5e61;
+    color: white;
+    margin-bottom: 15px;
+    display: none; /* Hide the alert by default */
+  }
+</style>
+<div class="row">
+<div class="col-md-12"> 
+     <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold" style="color: rgb(231, 171, 56)">UNIFIED INTAKE SHEET (UPDATE)</h6>
+        </div>
+        {% if messages %}
+        <div id="myAlert" class="alert">
+            {% for m in messages %}
+            <strong>{{ m }}</strong>
+            {% endfor %}
+          </div>
+          {% endif%}
+       <div class="card-body">
+        <form action="" method="POST">
+            {% csrf_token %}
+    <fieldset>
+        <legend>II.FAMILY COMPOSITION</legend>
+        <br><br>
+            <div class="row m-2">
+                <div class="col-md-12 m-2">
+                <table class="table table-bordered table-hover table-striped" width="100%" cellspacing="0">
+                    <thead>
+                        <th>NAME</th>
+                        <th>SEX</th>
+                        <th>Civil Status</th>
+                        <th>Relation to Patient</th>
+                        <th>Highest Educational Attainment</th>
+                        <th>Occupation</th>
+                        <th>Monthly Income</th>
+                        <th>Age</th>
+                        <th>Remove</th>
+                 
+                    </thead>
+                    <tbody id="tbody">
+                     
+                    </tbody>
+                    {% if famcom %}
+                    {% for famcom in famcom %}
+                <tfoot>
+                    <tr>
+                        <td>{{ famcom.fullname }}</td>
+                        <td>{{ famcom.gender }}</td>
+                        <td>{{ famcom.cstat }}</td>
+                        <td>{{ famcom.relation_to_patient }}</td>
+                        <td>{{ famcom.hea }}</td>
+                        <td>{{ famcom.occupation }}</td>
+                        <td>{{ famcom.mi }}</td>
+                        <td>{{ famcom.age }}</td>
+                        <td><a href="{% url 'del_famcom' id_uis famcom.familyComposition %}" ><i class="fa fa-trash"></i></a></td>
+                    </tr>
+                    {% endfor %}
+                    {% endif %}
+                 </tfoot>
+                </table>
+            </div>
+            </div>
+
+            <div class="row m-2">
+                <div class="col-md-12 m-2">
+                <table class="table table-bordered table-hover table-striped" width="100%" cellspacing="0">
+                    <thead>
+                        <th>Other Sources of Income</th>
+                        <th>Amount</th>
+                        <th>Remove</th>
+                       
+                    
+                    </thead>
+                    <tbody id="tbodyosofi">
+                       
+                    </tbody>
+                    <tfoot>
+                        {% if famcom_osof %}
+                        {% for famcom_osof in famcom_osof %}
+                        <tr>
+                            <td>{{ famcom_osof.otherSources_of_fi_desc }}</td>
+                            <td>{{ famcom_osof.otherSources_of_fi }}</td>
+                            <td ><a href="{% url 'del_famcom_osof' id_uis famcom_osof.fc_other_source %}"><i class="fa fa-trash"></i></a></td>
+                           
+                        </tr>
+                        {% endfor %}
+                        {% endif %}
+                     </tfoot>
+                </table>
+            </div>
+            </div>
+    </fieldset>
+
+  
+
+    <hr>
+    <button type="submit" style="color: rgb(231, 171, 56)" class="btn btn-warning text-white float-right m-2">UPDATE UIS</button>
+
+</div>
+</form>
+</div>
+</div>
+</div> 
+
+<script>
+    function showAlert(message, duration) {
+    var alertDiv = document.getElementById("myAlert");
+      alertDiv.innerHTML =   message;
+      alertDiv.style.display = "block"; 
+  
+      setTimeout(function() {
+        alertDiv.style.display = "none"; 
+      }, duration);
+    }
+    showAlert("SUCCESSFULLY UPDATED", 3000);
+  </script>
+{% endblock %}

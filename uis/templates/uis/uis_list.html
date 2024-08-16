@@ -1,0 +1,80 @@
+{% extends 'main_base.html' %}
+{% load static %}
+{% block title %}
+Patient Search
+{% endblock %}
+{% block content %}
+<div class="row">
+<div class="col-md-12"> 
+     <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold" style="color: rgb(231, 171, 56)">UNIFIED INTAKE SHEET</h6>
+        </div>
+        <form action="" method="GET">
+            <div class="row m-4">
+                <div class="col-md-4">
+                    <input type="text" name="search" class="form-control" placeholder="Search Name">
+                </div>
+                <div class="col-md-1">
+                <button type="submit" class="btn btn-success form-control"><i class="fa fa-search"></i></button>
+                </div>
+            </div>
+        </form>
+        <div class="card-body">
+            <div class="table-responsive">
+              <table class="table table-bordered table-hover table-striped"  width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>DATE OF INTAKE</th>
+                            <th>PATIENT NAME</th>
+                            <th>Unified Intake Sheet</th>
+                   
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for s in show %}
+                            <tr>
+                            <td>
+                                {% for u in uis %}
+                                {% if u.uis == s.uis_id %}
+                                {{ u.date }}
+                                {% endif %}
+                                {% endfor %}
+                            </td>
+                            <td>
+                                {% for u in uis %}
+                                {% if u.uis == s.uis_id %}
+                                {{ s.client_name }}
+                                {% endif %}
+                                {% endfor %}
+                            </td>
+                            <td class="text-center">
+                                {% for u in uis %}
+                                {% if u.uis == s.uis_id %}
+                                <a href="{% url 'uis_pdf' u.uis %}" target="_blank" class="btn btn-success">PRINT</a>
+                                <a href="{% url 'update_uis' u.uis %}"  class="btn btn-warning">VIEW</a>
+                                <a href="{% url 'duplicate_uis' u.uis %}"  class="btn btn-secondary">COPY</a>
+                                {% if user_id == 'JMZ' %}
+                                   <a href="{% url 'delete_uis' u.uis %}"  class="btn btn-danger">DELETE</a>
+                               {% endif %}
+                                {% endif %}
+                                {% endfor %}
+                            </td>
+                           
+                          </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+</div> 
+<script>
+    $(document).ready(function() {
+  $('#dataTable').DataTable({
+    "pageLength": 10
+  });
+});
+</script>
+{% endblock %}

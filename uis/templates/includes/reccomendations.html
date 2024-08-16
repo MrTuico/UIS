@@ -1,0 +1,46 @@
+<div class="modal fade" id="recomModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+ aria-hidden="true">
+ <div class="modal-dialog" role="document">
+     <div class="modal-content">
+         <div class="modal-header">
+             <h5 class="modal-title" id="exampleModalLabel">Reccomendations</h5>
+             <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                 <span aria-hidden="true">×</span>
+             </button>
+         </div>
+         <div class="modal-body">
+                <div class="row m-2">
+                    <label>Type of Assistnce</label>
+                    <input type="text" readonly class="form-control" id="mtoa" value="MEDICAL">
+                  
+                    <input type="checkbox" id ="show_res" style="height: 20px;width: 20px;margin: 5px;">
+                   <label>Amount of Assistance</label>
+                    <input type="number" class="form-control" id="maos">
+                  
+                    <label>Mode of Assistance</label>
+                    <!-- <input type="text" class="form-control" id="mmoa" oninput="this.value = this.value.toUpperCase()"> -->
+                    <select type="text" id="mmoa" class="form-control">
+                    <option value="">--select here--</option>
+                    <option value="ECG">ECG</option>
+                    <option value="XRAY">XRAY</option>
+                    <option value="DEXA-SCAN">DEXA-SCAN</option>
+                    <option value="OR BILL">OR BILL</option>
+                    <option value="PROFESSIONAL FEE">PROFESSIONAL FEE</option>
+                    
+                    {% for r in get_rcd %}
+                    <option value="{{ r.description }}">{{ r.description }}</option>
+                    {% endfor %}
+                  </select>
+                    <label>Fund Source</label>
+                    <input type="text" class="form-control" id="mfs" value="MAIFIPP" oninput="this.value = this.value.toUpperCase()">
+
+                </div>
+         </div>
+         <div class="modal-footer">
+             <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+             <button type="button" class="btn btn-primary" onclick="add_reccom()">Add</button>
+            
+         </div>
+     </div>
+ </div>
+</div>

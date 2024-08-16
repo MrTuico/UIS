@@ -1,0 +1,209 @@
+{% extends 'main_base.html' %}
+{% load static %}
+{% block title %}
+Unified Intake Sheet
+{% endblock %}
+{% block content %}
+<style>
+fieldset {
+  background-color: #eeeeee;
+}
+
+legend {
+  background-color: rgb(118, 165, 184);
+  color: white;
+  padding: 2px 5px;
+}
+.alert {
+    padding: 15px;
+    background-color: #cb5e61;
+    color: white;
+    margin-bottom: 15px;
+    display: none; /* Hide the alert by default */
+  }
+</style>
+<div class="row">
+<div class="col-md-12"> 
+     <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold" style="color: rgb(231, 171, 56)">MEDICAL SOCIAL SERVICE ASSESSMENT TOOL</h6>
+        </div>
+        {% if messages %}
+        <div id="myAlert" class="alert">
+            {% for m in messages %}
+            <strong>{{ m }}</strong>
+            {% endfor %}
+          </div>
+          {% endif%}
+       <div class="card-body">
+        <form action="{% url 'add_mssat' uis %}" method="POST">
+            {% csrf_token %}
+    <fieldset>
+        <legend>DEMOGRAPHIC DATA</legend>
+        <div class="row m-4">
+            <div class="col-md-3">
+                <label>DATE OF ADMISSION/CONSULTATION:</label>
+                <input type="date" name="doac" class="form-control" value="{{ date_today }}">
+            </div>
+            <div class="col-md-3">
+                <label>BASIC WARD/(specify):</label>
+                <input type="text" name="basic_ward" oninput="this.value = this.value.toUpperCase()" class="form-control" value="NONE" required onclick="clearZeroValue(this)">
+            </div>
+            <div class="col-md-3">
+                <label>NON BASIC WARD(specify):</label>
+                <input type="text" name="non_basic"oninput="this.value = this.value.toUpperCase()"  class="form-control" value ="NONE" required onclick="clearZeroValue(this)">
+            </div>
+            <div class="col-md-3">
+                <label>MSS NO::</label>
+                <input type="text" name="mss_no" class="form-control" value="{{ mms_no_auto }}" required>
+            </div>
+            <div class="col-md-3">
+                <label>SOURCE OF REFERRAL NAME:</label>
+                <input type="text" name="src_referal_name" oninput="this.value = this.value.toUpperCase()" class="form-control" value ="NONE" onclick="clearZeroValue(this)">
+            </div>
+            <div class="col-md-3">
+                <label>CONTACT NUMBER:</label>
+                <input type="number" name="cnum" class="form-control" value ="0" onclick="clearZeroValue(this)">
+            </div>
+            <div class="col-md-6">
+                <label>ADDRESS:</label>
+                <input type="text" name="address"  oninput="this.value = this.value.toUpperCase()" class="form-control" value ="NONE" onclick="clearZeroValue(this)">
+            </div>
+            <div class="col-md-3">
+                <label>EMPLOYER:</label>
+                <input type="text" name="employer" oninput="this.value = this.value.toUpperCase()" class="form-control" value ="NONE" onclick="clearZeroValue(this)">
+            </div>
+            <div class="col-md-3">
+                <label>TYLE OF LIVING ARRANGEMENT:</label>
+               <select name="tla" class="form-control">
+                <option value="NONE">NONE</option>
+                <option value="OWNED">OWNED</option>
+                <option value="RENT">RENT</option>
+                <option value="SHARED">SHARED</option>
+                <option value="PRIVATE">PRIVATE</option>
+                <option value="INSTITUTION">INSTITUTION</option>
+                <option value="HOMELESS">HOMELESS</option>
+               </select>
+            </div>
+            <div class="col-md-3">
+                <label>PHILHEALTH MEMBERSHIP:</label>
+               <select name="phil_mem" class="form-control">
+                <option value="DIRECT">DIRECT</option>
+                <option value="INDIRECT">INDIRECT</option>
+               </select>
+            </div>
+            <div class="col-md-3">
+                <label>MSWD CLASSIFICATION:</label>
+               <select name="mswd_cassif" class="form-control">
+                <option value="FINANCIALLY CAPABLE">FINANCIALLY CAPABLE</option>
+                <option value="FINANCIALLY INCAPABLE">FINANCIALLY INCAPABLE</option>
+               </select>
+            </div>
+        </div>
+        <hr>
+    </fieldset>
+   
+
+    <fieldset>
+  
+            <div class="row m-2">
+               
+                    <div class="col-md-6">
+                        <label>MARGINALIZED SECTORAL MEMBERSHIP:</label>
+                       <select name="marginalized_sec_mem" class="form-control">
+                        <option value="ARTISANAL FISHERFOLK">ARTISANAL FISHERFOLK</option>
+                        <option value="FARMERS AND LANDLESS RURAL WORKERS">FARMERS AND LANDLESS RURAL WORKERS</option>
+                        <option value="INDIGENOUS PEOPLE">INDIGENOUS PEOPLE</option>
+                        <option value="FORMAL AND LABOR MIGRANT WORKERS">FORMAL AND LABOR MIGRANT WORKERS</option>
+                        <option value="WORKERS IN INFORMAL SECTORS">WORKERS IN INFORMAL SECTORS</option>
+                        <option value="SENIOR CITIZEN">SENIOR CITIZEN</option>
+                        <option value="PWD">PWD</option>
+                        <option value="VICTIMS OF DISASTERS AND CALAMTIES">VICTIMS OF DISASTERS AND CALAMTIES</option>
+                        <option value="URBAN POOR">URBAN POOR</option>
+                        <option value="OTHERS">OTHERS</option>
+                       </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label>CLOTHING:</label>
+                     <input type="number" name="clothing_amt" class="form-control" value="0" onclick="clearZeroValue(this)">
+                    </div>
+     
+                <div class="col-md-12 mt-4">
+                    <fieldset>
+                        <legend  style="background-color: rgb(83, 151, 146);">FUEL SOURCE</legend>
+                        <div class="row">
+                        <div class="col-md-3">
+                        <input type="checkbox" name="lpg">LPG
+                        <input type="number" class="form-control" name="amt_lpg"  value="0" onclick="clearZeroValue(this)">
+                        </div>
+                        <div class="col-md-3">
+                            <input type="checkbox" name="elec">ELECTRIC
+                            <input type="number" class="form-control" name="amt_elec"  value="0" onclick="clearZeroValue(this)">
+                        </div>
+                        <div class="col-md-3">
+                            <input type="checkbox" name="char">CHARCOAL
+                            <input type="number" class="form-control" name="amt_char"  value="0" onclick="clearZeroValue(this)">
+                        </div>
+                        <div class="col-md-3">
+                            <input type="checkbox" name="fwood">FIREWOOD
+                            <input type="number" class="form-control" name="amt_fwood"  value="0" onclick="clearZeroValue(this)">
+                        </div>
+                        </div>
+                    </fieldset>
+                    </div>
+                    <div class="col-md-12 mt-4">
+
+                 </div>       
+            </div>          
+    </fieldset>
+  
+    <fieldset>
+  
+            <div class="row m-2">
+              
+                <div class="col-md-4">
+                    <label>DURATION OF PROBLEM/SYMPTOMS:</label>
+                    <input type="text" class="form-control" name="duration_of_prob" value="NONE" onclick="clearZeroValue(this)">
+                </div>
+
+                <div class="col-md-4">
+                    <label>PREVIOUS TREATMENT/DURATION:</label>
+                    <input type="text" class="form-control" name="prev_treatment" value="NONE" onclick="clearZeroValue(this)">
+                </div>
+
+                <div class="col-md-4">
+                    <label>HEALTH ACCESSIBILITYA PROBLEM:</label>
+                    <input type="text" class="form-control" name="health_accessibility_prob" value="NONE" onclick="clearZeroValue(this)">
+                </div>
+            </div>
+    </fieldset>
+    </fieldset>
+    <hr>
+    <button type="submit" style="color: rgb(231, 171, 56)" class="btn btn-warning text-white float-right m-2">SAVE</button>
+</div>
+</form>
+</div>
+</div>
+</div> 
+<script>
+   
+    function showAlert(message, duration) {
+      var alertDiv = document.getElementById("myAlert");
+      alertDiv.innerHTML =  message;
+      alertDiv.style.display = "block"; 
+  
+      setTimeout(function() {
+        alertDiv.style.display = "none"; 
+      }, duration);
+    }
+    showAlert("SUCCESSFULLY ADDED", 3000);
+
+    function clearZeroValue(field) {
+    if (field.value === "0") {
+        field.value = "";
+    }else if(field.value === "NONE"){
+        field.value = "";
+    }
+        }
+  </script>
+{% endblock %}

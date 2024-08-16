@@ -1,0 +1,50 @@
+{% load static %}
+<ul class="navbar-nav bg-gradient-success sidebar sidebar-dark accordion" id="accordionSidebar">
+    <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{% url 'dashboard' %}">
+        <div class="sidebar-brand-icon rotate-n-15">
+            <img src="{% static 'img/logo.png' %}" width="30px" height="30px" alt="">
+        </div>
+        <div class="sidebar-brand-text mx-3">BRGHGMC <sup><i class="fas fa-laugh-wink"></i></sup></div>
+    </a>
+    <hr class="sidebar-divider my-0">
+    <li class="nav-item active">
+        <a class="nav-link" href="/">
+            <i class="fas fa-users"></i>
+            <span>Patient Search</span></a>
+    </li>
+    <hr class="sidebar-divider">
+    <div class="sidebar-heading">
+        Navigations
+    </div>
+    <li class="nav-item">
+        <a class="nav-link" href="{% url 'uis_list' %}">
+            <i class="fas fa-list"></i>
+            <span>UIS List</span></a>
+    </li>
+
+    <li class="nav-item">
+        <a class="nav-link" href="{% url 'mss_tool_list' %}">
+            <i class="fas fa-list"></i>
+            <span>MSS Tool</span></a>
+    </li>
+
+    <li class="nav-item">
+        <a class="nav-link" href="{% url 'scsr_list' %}">
+            <i class="fas fa-list"></i>
+            <span>SOCIAL PROFILE</span></a>
+    </li>
+
+    <li class="nav-item">
+        <a class="nav-link" href="{% url 'uis_excel' %}">
+            <i class="fas fa-list"></i>
+            <span>Import UIS Excel</span></a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="{% url 'walkin_page' %}">
+            <i class="fas fa-list"></i>
+            <span>Walk-In</span></a>
+    </li>
+    <div class="text-center d-none d-md-inline">
+        <button class="rounded-circle border-0" id="sidebarToggle"></button>
+    </div>
+</ul>

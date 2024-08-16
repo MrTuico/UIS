@@ -1,0 +1,173 @@
+{% extends 'main_base.html' %}
+{% load static %}
+{% block title %}
+Unified Intake Sheet
+{% endblock %}
+{% block content %}
+<style>
+fieldset {
+  background-color: #eeeeee;
+}
+
+legend {
+  background-color: rgb(118, 165, 184);
+  color: white;
+  padding: 2px 5px;
+}
+.alert {
+    padding: 15px;
+    background-color: #cb5e61;
+    color: white;
+    margin-bottom: 15px;
+    display: none; /* Hide the alert by default */
+  }
+</style>
+<div class="row">
+<div class="col-md-12"> 
+     <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold" style="color: rgb(231, 171, 56)">SOCIAL CASE STUDY REPORT (UPDATE)</h6>
+        </div>
+        {% if messages %}
+        <div id="myAlert" class="alert">
+            {% for m in messages %}
+            <strong>{{ m }}</strong>
+            {% endfor %}
+          </div>
+          {% endif%}
+       <div class="card-body">
+        <form action="{% url 'process_update_scsr' scsr_details.scsr %}" method="POST">
+            {% csrf_token %}
+    <fieldset>
+        <legend>I.IDENTIFYING INFORMATION</legend>
+        <div class="row m-4">
+            <div class="col-md-6">
+                <label>EMPLOYER:</label>
+                <input type="text" name="employer" oninput="this.value = this.value.toUpperCase()" class="form-control" value="{{ scsr_details.employer }}" >
+            </div>
+            <div class="col-md-6">
+                <label>SPECIAL SKILL:</label>
+                <input type="text" name="skill" oninput="this.value = this.value.toUpperCase()" class="form-control" value ="{{ scsr_details.special_skill }}">
+            </div>
+            <div class="col-md-4">
+                <label>DATE OF ADMISSION:(dd/mm/yyyy)</label>
+                <input type="date" name="doa" class="form-control" value="{{ scsr_details.date_admission }}">
+            </div>
+            <div class="col-md-4">
+                <label>ROOM IN DATE AND TIME:</label>
+                <input type="text" name="ridat" oninput="this.value = this.value.toUpperCase()" class="form-control" value="{{ scsr_details.room }}">
+            </div>
+            <div class="col-md-4">
+                <label>TYPE OF DEFORMITY/DISABILITY:</label>
+                <input type="text" name="tdd" oninput="this.value = this.value.toUpperCase()" class="form-control" value ="{{ scsr_details.tdd }}">
+            </div>
+        </div>
+        <hr>
+    </fieldset>
+   
+
+    <fieldset>
+        <legend>III. LIST OF EXPENSES</legend>
+            <div class="row m-2">
+    
+                <div class="col-md-12">
+                <fieldset>
+                    <legend  style="background-color: rgb(83, 151, 146);">HOUSING MATERIAL</legend>
+                    <div class="row">
+                    <div class="col-md-4">
+                    {% if hm.0 == 'LIGHT/NATIVE' %}
+                    <input type="checkbox" name="ln" checked>LIGHT/NATIVE
+                    {% else %}
+                    <input type="checkbox" name="ln">LIGHT/NATIVE
+                    {% endif %}
+                    </div>
+                    <div class="col-md-4">
+                        {% if hm.1 == 'CONCRETE' %}
+                        <input type="checkbox" name="conc" checked>CONCRETE
+                        {% else %}
+                        <input type="checkbox" name="conc">CONCRETE
+                    {% endif %}
+                    </div>
+                    <div class="col-md-4">
+                        {% if hm.2 == 'MIXED' %}
+                        <input type="checkbox" name="mix" checked>MIXED
+                        {% else %}
+                        <input type="checkbox" name="mix">MIXED
+                    {% endif %}
+                    </div>
+                    </div>
+                </fieldset>
+                </div>
+                <div class="col-md-12 mt-4">
+                    <fieldset>
+                        <legend  style="background-color: rgb(83, 151, 146);">FUEL SOURCE</legend>
+                        <div class="row">
+                        <div class="col-md-3">
+                        {% if fs.0 == 'LPG' %}
+                        <input type="checkbox" name="lpg" checked>LPG
+                        {% else %}
+                        <input type="checkbox" name="lpg">LPG
+                        {% endif %}
+                        </div>
+                        <div class="col-md-3">
+                            {% if fs.1 == 'ELECTRICITY' %}
+                            <input type="checkbox" name="elec" checked>ELECTRIC
+                            {% else %}
+                            <input type="checkbox" name="elec">ELECTRIC
+                            {% endif %}
+                        </div>
+                        <div class="col-md-3">
+                            {% if fs.2 == 'CHARCOAL' %}
+                            <input type="checkbox" name="char" checked>CHARCOAL
+                            {% else %}
+                            <input type="checkbox" name="char">CHARCOAL
+                            {% endif %}
+                        </div>
+                        <div class="col-md-3">
+                            {% if fs.3 == 'FIREWOOD' %}
+                            <input type="checkbox" name="fwood" checked>FIREWOOD
+                            {% else %}
+                            <input type="checkbox" name="fwood">FIREWOOD
+                            {% endif %}
+                        </div>
+                        </div>
+                    </fieldset>
+                    </div>
+                    <div class="col-md-12 mt-4">
+
+                 </div>       
+            </div>          
+    </fieldset>
+  
+    <fieldset>
+        <legend>IV. PROBLEM PRESENTED </legend>
+            <div class="row m-2">
+              
+                <div class="col-md-12">
+                    <textarea name="pr" id="" class="form-control"  rows="5" oninput="this.value = this.value.toUpperCase()" >{{ scsr_details.problem_presented }}</textarea>
+                </div>
+            </div>
+    </fieldset>
+    </fieldset>
+    <hr>
+    <button type="submit" style="color: rgb(231, 171, 56)" class="btn btn-warning text-white float-right m-2">UPDATE</button>
+</div>
+</form>
+</div>
+</div>
+</div> 
+
+<script>
+    function showAlert(message, duration) {
+    var alertDiv = document.getElementById("myAlert");
+      alertDiv.innerHTML =   message;
+      alertDiv.style.display = "block"; 
+  
+      setTimeout(function() {
+        alertDiv.style.display = "none"; 
+      }, duration);
+    }
+    showAlert("SUCCESSFULLY UPDATED", 3000);
+  </script>
+
+{% endblock %}

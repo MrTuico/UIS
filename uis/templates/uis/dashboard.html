@@ -1,0 +1,172 @@
+{% extends 'main_base.html' %}
+{% load static %}
+{% load humanize %}
+{% block title %}
+Patient Search
+{% endblock %}
+{% block content %}
+
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
+    <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
+            class="fas fa-download fa-sm text-white-50"></i> Generate Report</a>
+</div>
+  <!-- Content Row -->
+  <div class="row">
+
+    <!-- Earnings (Monthly) Card Example -->
+    <div class="col-xl-4 col-md-6 mb-4">
+        <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                            UNIFIED INTAKE SHEET</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ uis_count|intcomma }}</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Earnings (Monthly) Card Example -->
+    <div class="col-xl-4 col-md-6 mb-4">
+        <div class="card border-left-success shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                            MSS TOOL</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ mssat_count|intcomma }}</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-list fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Earnings (Monthly) Card Example -->
+    <div class="col-xl-4 col-md-6 mb-4">
+        <div class="card border-left-info shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Social Case Study Report
+                        </div>
+                        <div class="row no-gutters align-items-center">
+                            <div class="col-auto">
+                                <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">{{ scsr_count|intcomma }}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<hr>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover table-striped" id="dt" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Age</th>
+                        <th title="MALE">M</th>
+                        <th title="FEMALE">F</th>
+                        <th>VAWC</th>
+                        <th title="INDIGENOUS PEOPLE">IP</th>
+                        <th title="SENIOR CITIZEN">SC</th>
+                        <th>PWD</th>
+                        <th title="SOLO PARENT">SP</th>
+                        <th>4Ps</th>
+                        <th title="BARANGAY OFFICIAL">BO</th>
+                        <th title="BARANGAY OFFICIAL DEP">BOD</th>
+                        <th>BHW</th>
+                        <th title="HEALTH WORKER EMPLOYEE">HWE</th>
+                        <th title="GOVERNMENT EMPLOYEE">GE</th>
+                        <th title="NATIONAL ATHLETE">NA</th>
+                        <th title=""></th>
+                        <th title="PDL/ INMATE">PDL</th>
+                        <th>CICL</th>
+                        <th title="FAMILY HEAD AND OTHER NEEDY ADULT">FHAONA</th>
+                        <th>PERSONNEL</th>
+                        <th title="PERSONNEL DEPENDENT">PD</th>
+                        <th title="PHIC">B</th>
+                        <th title="PHIC">C1</th>
+                        <th title="PHIC">C2</th>
+                        <th title="PHIC">C3</th>
+                        <th title="NON-PHIC">B</th>
+                        <th title="NON-PHIC">C1</th>
+                        <th title="NON-PHIC">C2</th>
+                        <th title="NON-PHIC">C3</th>
+                        <th title="POS">FI</th>
+                        <th title="POS">FC</th>
+                        <th>REMARKS</th>
+                        
+                        
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for cl in uis %}
+               <tr>
+                <td>
+                    {% for p in patient_uis %}
+                        {% if cl.uis_id == p.uis_id %}
+                            {{ p.client_name }}
+                        {% endif %}
+                    {% endfor %}
+                </td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+               </tr>
+               {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+ 
+</div>
+
+<!-- Content Row -->
+
+
+{% endblock %}

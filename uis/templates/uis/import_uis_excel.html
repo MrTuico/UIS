@@ -1,0 +1,91 @@
+{% extends 'main_base.html' %}
+{% load static %}
+{% block title %}
+Patient Search
+{% endblock %}
+{% block content %}
+<div class="row">
+<div class="col-md-12"> 
+     <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold" style="color: rgb(231, 171, 56)">UPLOAD UIS FILE</h6>
+        </div>
+        <form action="{% url 'uis_excel' %}" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+       <div class="row">
+            <div class="col-md-3">
+                <input type="file" name="fileinput"  class="form-control m-5" required>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" style="border-radius: 8px;background-color: rgb(231, 171, 56)" class="form-control m-5">
+               <font color="white"><i class="fa fa-search"></i>Upload</font>
+                </button>
+              </div>
+       </div>
+       </form>
+       <div class="row m-2">
+        <div class="col-md-5"></div><div class="col-md-4"></div>
+        <div class="col-md-3 ">
+            <input type="text" class="form-control float-right" id="searchInput" placeholder="Search">  
+        </div>
+       </div>
+          
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover table-striped" id="dt" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>FULLNAME</th>
+                            <th>Create UIS</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for e in uis_excel %}
+                        <tr>
+                      <td>{{ e.uis_excel }}</td>
+                      <td><a href="{% url 'exceltoweb_uis' e.uis_copy %}" class="btn btn-success">Create UIS</a></td>
+                        </tr>
+                      {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+</div> 
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+  const dataTable = document.getElementById('dt');
+  const searchInput = document.getElementById('searchInput');
+
+  searchInput.addEventListener('keyup', function() {
+    const searchText = searchInput.value.toLowerCase();
+    const rows = dataTable.getElementsByTagName('tr');
+
+    for (let i = 0; i < rows.length; i++) {
+      const row = rows[i];
+      const cells = row.getElementsByTagName('td');
+      let found = false;
+
+      for (let j = 0; j < cells.length; j++) {
+        const cell = cells[j];
+        if (cell) {
+          const text = cell.textContent.toLowerCase();
+          if (text.includes(searchText)) {
+            found = true;
+            break;
+          }
+        }
+      }
+
+      if (found) {
+        row.style.display = '';
+      } else {
+        row.style.display = 'none';
+      }
+    }
+  });
+});
+
+</script>
+{% endblock %}
