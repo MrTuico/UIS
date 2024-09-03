@@ -1,0 +1,135 @@
+{% extends 'main_base.html' %}
+{% load static %}
+{% load humanize %}
+{% block title %}
+REPORTS
+{% endblock %}
+{% block content %}
+<div class="row">
+<div class="col-md-12"> 
+     <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold" style="color: rgb(231, 171, 56)">UNIFIED INTAKE SHEET REPORT</h6>
+            <button title="mag search po muna bago mag export salamat!" onclick="exportTableToExcel('tabletoexport', '{{ date_today }}.xlsx');" class="btn float-right" style="border-radius: 8px;background-color: rgb(231, 171, 56)"><font color="white"><i class="fa fa-upload"></i>&nbsp;Export to excel</font></button>
+        </div>
+        <form action="" method="POST">
+            {% csrf_token %}
+            <div class="row m-4">
+                <div class="col-md-4">
+                    <label>Date From:</label>
+                    <input type="date" name="d1" class="form-control" value="{{ d|date:'Y-m-01' }}">
+                </div>
+                <div class="col-md-4">
+                    <label>Date To:</label>
+                    <input type="date" name="d2" class="form-control" value="{{ d|date:'Y-m-d' }}">
+                </div>
+                <input type="hidden" value="{{ user }}" name="user">
+                <div class="col-md-1 mt-2">
+                    <label> </label>
+                <button type="submit" class="btn btn-success form-control"><i class="fa fa-search"></i></button>
+                </div>
+            </div>
+        </form>
+        <div class="card-body">
+            <div class="table-responsive">
+              <table class="table table-bordered table-hover table-striped" id="tabletoexport"  width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>DATE OF INTAKE</th>
+                            <th>PATIENT NAME</th>
+                            <th>AGE</th>
+                            <th>GENDER</th>
+                            <th>CLASSIFICATION</th>
+                            <th>ASSISTANCE</th>
+                            <th>AMOUNT OF ASSISTANCE</th>
+                  
+                   
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if u %}
+                        {% for s in u %}
+                            <tr>
+                            <td>
+                              
+                                {% for p in k %}
+                                {% if p.uis_id == s.uis %}
+                                {{ p.date_of_intake }}
+                                {% endif %}
+                                {% endfor %}
+                             
+                            </td>
+                            <td>
+                                {% for u in h %}
+                                {% if u.uis_id == s.uis %}
+                                {{ u.client_name }}
+                                {% endif %}
+                                {% endfor %}
+                            </td>
+                            <td>
+                                {% for u in h %}
+                                {% if u.uis_id == s.uis %}
+                                {{ u.age }}
+                                {% endif %}
+                                {% endfor %}
+                            </td>
+                            <td>
+                                {% for u in h %}
+                                {% if u.uis_id == s.uis %}
+                                {{ u.gender }}
+                                {% endif %}
+                                {% endfor %}
+                            </td>
+                            <td>
+                                {% for b in n %}
+                                {% if b.uis_id == s.uis %}
+                                {{ b.category }}
+                                {% endif %}
+                                {% endfor %}
+                            </td>
+                            <td>
+                                {% for r in r %}
+                                <ul>
+                                    {{ r.mode_of_assistance  }}: {{ r.amt_of_assistance|intcomma  }}
+                                </ul>
+                                {% endfor %}
+                            </td>
+                            <td>
+                                {% for b in n %}
+                                {% if b.uis_id == s.uis %}
+                                {{ b.total_amount_of_assistance }}
+                                {% endif %}
+                                {% endfor %}
+                            </td>
+                          </tr>
+                        
+                        {% endfor %}
+                        {% else %}
+                        <h3><font color="red">NO DATA FOUND</font></h3>
+                      {% endif %}
+                    </tbody>
+                    <tfoot>
+                  
+                        <th colspan="6" class="text-right">Total:</th>
+                        <th id="w"></th>
+                       </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+</div> 
+<script>
+    $(document).ready(function(){
+     var w;
+     var totalw = 0;
+     $('td:nth-child(7)').each(function(){
+    
+         w = $(this).html();
+         totalw += parseFloat(w);
+         $('#w').text(totalw.toFixed(2)); 
+     });
+    });
+     </script>
+
+{% endblock %}

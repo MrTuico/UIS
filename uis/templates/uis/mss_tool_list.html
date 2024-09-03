@@ -35,11 +35,7 @@ Patient Search
                         {% for s in show %}
                             <tr>
                             <td>
-                                {% for u in uis %}
-                                {% if u.uis == s.uis_id %}
-                                {{ u.date }}
-                                {% endif %}
-                                {% endfor %}
+                                {{ s.uis.date }}
                             </td>
                             <td>
                                 {% for u in uis %}
@@ -49,21 +45,9 @@ Patient Search
                                 {% endfor %}
                             </td>
                             <td class="text-center">
-                                {% for u in uis %}
-                                {% if u.uis == s.uis_id %}
-                                {% if u.has_mssat == 1 %}
-                                {% for sc in mssat_uis %}
-                                    {% if sc.uis_id  == u.uis %}
-                                        <a href="{% url 'new_mssat_pdf' u.uis %}" target="_blank" class="btn btn-success">PRINT</a>
-                                        <a href="{% url 'update_msstool' sc.mssat %}" class="btn btn-warning">VIEW</a>
-                                    {% endif %}
-                                {% endfor %}
-                                {% else %}
-                                <a href="{% url 'add_mssat' u.uis %}"class="btn btn-danger">ADD MSSAT</a>
-                                {% endif %}
-
-                                {% endif %}
-                                {% endfor %}
+                                <a href="{% url 'get_patient_uis_to_mssat' s.uis_id s.uis.hospno %}"class="btn btn-warning">ADD MSS TOOL</a>
+                                <a href="{% url 'get_patient_uis_to_mssat_history' s.uis_id s.uis.hospno %}"class="btn btn-success">VIEW MSS TOOL HISTORY</a>
+                             
                             </td>
                           </tr>
                         {% endfor %}

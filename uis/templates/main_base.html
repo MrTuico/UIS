@@ -46,6 +46,13 @@
     {% include 'includes/footer_scripts.html' %}
 </body>
 <script>
+    function exportTableToExcel(tabletoexport, filename = '{{ date_today }}.xlsx') {
+      const table = document.getElementById(tabletoexport);
+      const wb = XLSX.utils.table_to_book(table);
+      return XLSX.writeFile(wb, filename);
+    }
+    </script>
+<script>
     $(document).ready(function() {
       $(".clickable-row").click(function() {
         window.location = $(this).data("href");

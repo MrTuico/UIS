@@ -8,7 +8,7 @@ DATE OF CHARGES
 <div class="col-md-12"> 
      <div class="card shadow mb-4">
         <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold" style="color: rgb(231, 171, 56)">Date of Charges</h6>
+            <h6 class="m-0 font-weight-bold" style="color: rgb(231, 171, 56)">Date of Encounter</h6>
         </div>
         <div class="m-5"><h5>Patient name:&nbsp;&nbsp;<b><font color="blue">{{ fullname }}</font> - ({{ hospno }})</b></h5></div>
         <div class="card-body">
@@ -18,13 +18,14 @@ DATE OF CHARGES
                         <tr>
                             <th>Date</th>
                             <th>TOE</th>
+                          
                         </tr>
                     </thead>
                     <tbody>
                         {% if enctrData %}
                         {% for c in enctrData %}
-
-                            <tr  class="clickable-row"  data-href="{% url 'add_uis' hospno c.enccode c.toecode %}" id="cursor">
+                      
+                            <tr  class="clickable-row"  data-href="{% url 'get_patient_history' hospno c.enccode c.toecode %}" id="cursor">
                             <td>{{ c.encdate }}</td>
                             <td>{{ c.toecode }}</td>
                         </tr>

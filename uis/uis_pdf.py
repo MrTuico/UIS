@@ -11,18 +11,19 @@ from uis.models import *
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.platypus import Paragraph
 
-def uis_pdf(request,uis):
+def uis_pdf(request,uis,uis_misc):
     malasakit = 'uis/static/malasakit.png'
     brglogo = 'uis/static/logo.png'
     doh = 'uis/static/doh.png'
     dswd = 'uis/static/dswd.png'
     pcso = 'uis/static/pcso.png'
     philhealth = 'uis/static/philhealth.png'
-
+   
     get_details = UIS.objects.filter(uis = uis)
     for i in get_details:
         hospno = i.hospno
         philnum = i.phil_no
+        
     buf = io.BytesIO()
     c = canvas.Canvas(buf)
     response = HttpResponse(content_type='application/pdf')
@@ -102,11 +103,13 @@ def uis_pdf(request,uis):
     c.setFont("Times-Bold", 8, leading=None)
     c.drawString(0.3*inch, 1.36*inch, "VI. RECOMMENDATIONS(Rekomendasyon)")
 
-    get_uis = UIS.objects.filter(uis = uis)
+    get_uis = UIS_misc.objects.filter(uis_misc = uis_misc)
+
     for gu in get_uis:
         total_income = gu.total_income
         tot_income = '{:,.2f}'.format(float(total_income))
-    informant_details = Informant.objects.filter(uis = uis)
+       
+    informant_details = Informant.objects.filter(uis_misc= uis_misc)
     for a in informant_details:
         doi_init = a.date_of_intake
         date_conv = datetime.strptime(doi_init, '%Y-%m-%d')
@@ -451,7 +454,7 @@ def uis_pdf(request,uis):
         tot_income_osof = '{:,.2f}'.format(float(fo.otherSources_of_fi))
         c.drawString(3.7*inch, ye*inch, tot_income_osof)
         ye -= xe
-    list_of_expenses = ListofExpenses.objects.filter(uis = uis)
+    list_of_expenses = ListofExpenses.objects.filter(uis_misc= uis_misc)
     for oo in list_of_expenses:
         hauz = oo.house
         amt_hauz = oo.amt_house
@@ -478,7 +481,7 @@ def uis_pdf(request,uis):
         f_oe = conv_oth_expenses.replace(" ","")
         oe = f_oe.split(',')
         amt_oe = conv_amt_oth_expenses.split(',')
-    problem_presented = ProblemPresented.objects.filter(uis = uis)
+    problem_presented = ProblemPresented.objects.filter(uis_misc= uis_misc)
     for mm in problem_presented:
         problem = mm.problem
         conv_problem = problem.replace("[","").replace("]","").replace("'","")
@@ -976,7 +979,7 @@ def uis_pdf(request,uis):
     #     c.drawString(0.3*inch, 1.6*inch, examp[1002:1169])
     #     c.drawString(0.3*inch, 1.5*inch, examp[1169:1336])
 
-    swa_desc = SWA.objects.filter(uis = uis)
+    swa_desc = SWA.objects.filter(uis_misc= uis_misc)
     for sw in swa_desc:
         desc_swa = sw.swa_desc
         p = Paragraph(desc_swa, style=custom_font_size_swa )
@@ -1008,7 +1011,7 @@ def uis_pdf(request,uis):
         c.rect(6.45*inch,y*inch,1.6*inch,0.12*inch,fill=1)
         y -= x
 
-    reccom = Recommendations.objects.filter(uis = uis)
+    reccom = Recommendations.objects.filter(uis_misc= uis_misc)
     # count_famcom = FamilyComposition.objects.filter(uis = uis).count()
     ll =0.12
     zz = 1.1

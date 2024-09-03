@@ -40,7 +40,7 @@ def create_footer(c,doc):
     c.drawString(4.7*inch, 0.20*inch, "Effectivity Date: May 2, 2023")
     c.drawImage(padaba, 6.6*inch, 0.06*inch, mask='auto', width=100, height=20)
 
-def new_mssat_pdf(request,uis):
+def new_mssat_pdf(request,uis,uis_misc):
     
     page1 = 1
     page2 = 2
@@ -180,11 +180,13 @@ def new_mssat_pdf(request,uis):
         c.drawString(0.28*inch, 9.58*inch, "SOURCE OF REFERRAL")
         
         get_details = UIS.objects.filter(uis = uis)
-        for i in get_details:
-            hospno = i.hospno
+        for ff in get_details:
+            hospno = ff.hospno
+            philnum = ff.phil_no
+        get_details_misc = UIS_misc.objects.filter(uis_misc = uis_misc)
+        for i in get_details_misc:
             hsize_f = float(i.householdsize)
             hsize = i.householdsize
-            philnum = i.phil_no
             tot_income_f = float(i.total_income)
             tot_income = i.total_income
             tot_expense = float(i.total_expense)
@@ -194,7 +196,7 @@ def new_mssat_pdf(request,uis):
             c.setFont("Times-Bold", 9, leading=None)
             c.drawString(3.3*inch, 10.17*inch, hospno)
             c.drawString(3.3*inch, 9.87*inch, philnum)
-        informant_details = Informant.objects.filter(uis = uis)
+        informant_details = Informant.objects.filter(uis_misc = uis_misc)
         for a in informant_details:
             doi_init = a.date_of_intake
             date_conv = datetime.strptime(doi_init, '%Y-%m-%d')
@@ -211,7 +213,7 @@ def new_mssat_pdf(request,uis):
             c.drawString(1.3*inch, 10.17*inch, informant_time_of_interview)
             c.drawString(1.3*inch, 9.87*inch,  informant_end_time_of_interview)
             c.drawString(0.4*inch, 9.1*inch, informant_fullname)
-        mssat = MSSAT.objects.filter(uis = uis)
+        mssat = MSSAT.objects.filter(uis_misc = uis_misc)
         for sc in mssat:
             fuel_src_init = sc.fuel_source
             conv_fuel_src = fuel_src_init.replace("[","").replace("]","").replace("'","")
@@ -980,7 +982,7 @@ def new_mssat_pdf(request,uis):
        
         c.setLineWidth(1)
         c.setFillColor(white)
-        list_of_expenses = ListofExpenses.objects.filter(uis = uis)
+        list_of_expenses = ListofExpenses.objects.filter(uis_misc = uis_misc)
         for  oo in list_of_expenses:
             hauz = oo.house
             amt_hauz = oo.amt_house
@@ -1257,7 +1259,7 @@ def new_mssat_pdf(request,uis):
         p.wrapOn(c, 270,20)  
         p.drawOn(c,4.2*inch,1.57*inch) 
 
-        problem_presented = ProblemPresented.objects.filter(uis = uis)
+        problem_presented = ProblemPresented.objects.filter(uis_misc = uis_misc)
         for mm in problem_presented:
             problem = mm.problem
             conv_problem = problem.replace("[","").replace("]","").replace("'","")
@@ -1281,7 +1283,7 @@ def new_mssat_pdf(request,uis):
         c.setFillColor(whitesmoke)
         c.rect(0.25*inch,1.45*inch,3.875*inch,0.1*inch,fill=1)
         c.rect(4.125*inch,1.45*inch,3.875*inch,0.1*inch,fill=1)
-        swa_desc = SWA.objects.filter(uis = uis)
+        swa_desc = SWA.objects.filter(uis_misc = uis_misc)
         for sw in swa_desc:
             desc_swa = sw.swa_desc
             p = Paragraph(desc_swa, style=custom_font_size_swa_first )
@@ -2100,7 +2102,7 @@ def new_mssat_pdf(request,uis):
             c.drawString(7.75*inch, yyq*inch, "6")
             yyq -= yye
 
-        swa_desc = SWA.objects.filter(uis = uis)
+        swa_desc = SWA.objects.filter(uis_misc = uis_misc)
         for sw in swa_desc:
             desc_swa = sw.swa_desc
             p = Paragraph(desc_swa, style=custom_font_size_swa )
@@ -2131,8 +2133,10 @@ def new_mssat_pdf(request,uis):
         uwp = c.stringWidth(request.session['position'])/100
         uiwp = 210/100
         cup = (uiwp - uwp) / 2
-        fxip = cup + 4.55
-        c.drawString(fxip*inch, 0.9*inch,"License No.:"  )
+        fxip = cup + 4.95
+        c.drawString(fxip*inch, 0.9*inch, request.session['position'])
+        c.drawString(4.8*inch, 0.8*inch,"License No.:"  )
+
 
         uwn = c.stringWidth(request.session['name'])/100
         uiwn = 210/100

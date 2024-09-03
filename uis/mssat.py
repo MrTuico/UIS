@@ -532,12 +532,12 @@ def mssat_pdf(request,uis):
         p = Paragraph(ii_occu, style=custom_font_size )
         p.wrapOn(c, 85,20)  
         p.drawOn(c,1.47*inch,7.17*inch) 
-        scsr = SCSR.objects.filter(uis = uis)
-        for sc in scsr:
-            employer =sc.employer
-            p = Paragraph(employer, style=custom_font_size )
-            p.wrapOn(c, 130,20)  
-            p.drawOn(c,2.67*inch,7.17*inch) 
+        # scsr = SCSR.objects.filter(uis = uis)
+        # for sc in scsr:
+        #     employer =sc.employer
+        #     p = Paragraph(employer, style=custom_font_size )
+        #     p.wrapOn(c, 130,20)  
+        #     p.drawOn(c,2.67*inch,7.17*inch) 
 
         c.setFillColor(white)#14
         c.rect(0.25*inch,7*inch,7.75*inch,0.15*inch,fill=1)

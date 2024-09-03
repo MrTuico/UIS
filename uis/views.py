@@ -22,12 +22,13 @@ from openpyxl import load_workbook
 
 
 root = "http://173.10.2.108:9092/"
-# root = "http://172.22.10.11:9091/"
+# root_test = "http://172.22.10.11:9091/"
 cashop_api = root + "api/cashop/lookup"
 login_api = root + "api/login"
 cashop_api_ecntr = root + "api/cashop/encounter"
 malasakit_patiet_details = root + "api/malasakit/patient-details"
 malasakit_api_showRCD= root + "api/cashop/showRCD"
+
 def auth_login(request):
     if request.session.get('employee_id') is None:
         if request.method == 'POST':
@@ -35,7 +36,6 @@ def auth_login(request):
             password = request.POST.get("password")
             login_response = requests.post(login_api, data={'username': userid, 'password': password})
             login_json_response = login_response.json()
-
             if login_json_response['status'] == 'success':
                 if json.dumps(login_json_response['data']) == "[]":
                     messages.warning(request, "Invalid Username or Password")  
@@ -84,7 +84,7 @@ def sign_out(request):
 
 def dashboard(request):
     if request.session.get('employee_id') is not None:
-
+        
         uis_count = 0
         mssat_count = 0
         scsr_count=0
@@ -95,17 +95,14 @@ def dashboard(request):
         patient_uis = IdentifyingInformation.objects.all()
         for u in uis:
             mssat_count = MSSAT.objects.filter(uis_id=u.uis).count()
-            scsr_count = SCSR.objects.filter(uis_id=u.uis).count()
-            
-            
-        
-        return render(request, 'uis/dashboard.html',{'uis':uis,'patient_uis':patient_uis,'mssat_count':mssat_count,'scsr_count':scsr_count,'uis_count':uis_count,'user':request.session['name']})
+        return render(request, 'uis/dashboard.html',{'uis':uis,'patient_uis':patient_uis,'mssat_count':mssat_count,'uis_count':uis_count,'user':request.session['name']})
     else:
         return HttpResponseRedirect("/auth_login")
 
 def home(request):
     if request.session.get('employee_id') is not None:
         getData = ""
+       
         if request.method == 'POST':
             search_text = request.POST.get('data-input','')
             if search_text:
@@ -147,17 +144,6 @@ def mss_tool_list(request):
         mssat_uis = MSSAT.objects.all()
     return render(request,'uis/mss_tool_list.html',{'show':show,'uis':uis_show,'mssat_uis':mssat_uis,'user':request.session['name']})
 
-def scsr_list(request):
-    query = request.GET.get('search', '')
-    if query:
-        uis_show = UIS.objects.all()
-        scsr_uis = SCSR.objects.all()
-        show = IdentifyingInformation.objects.filter(Q (client_name__icontains=query))
-    else:
-        uis_show = UIS.objects.all()
-        scsr_uis = SCSR.objects.all()
-        show = IdentifyingInformation.objects.all()[:10]
-    return render(request,'uis/scsr_list.html',{'show':show,'uis':uis_show,'scsr_uis':scsr_uis,'user':request.session['name']})
 
 def get_patient_enctr(request,hospno):
     if request.session.get('employee_id') is not None:
@@ -574,77 +560,6 @@ def add_uis(request, hospno,code, toecode):
                             g.save()
                     else:
                         reccom_data = []
-                    scsrcheck = request.POST.get('scsrcheck',False)
-                    if scsrcheck:
-                        housing_mat = []
-                        fuel_src = []
-                        # amt_fuel_src = []
-                        employer = request.POST.get('employer')
-                        skill = request.POST.get('skill')
-                        doa = request.POST.get('doa')
-                        ridat = request.POST.get('ridat')
-                        tdd = request.POST.get('tdd')
-                        ln = request.POST.get('ln', False)
-                        conc = request.POST.get('conc', False)
-                        mix = request.POST.get('mix', False)
-                        lpg = request.POST.get('lpg', False)
-                        # amt_lpg = request.POST.get('amt_lpg')
-                        elec = request.POST.get('elec', False)
-                        # amt_elec = request.POST.get('amt_elec')
-                        char = request.POST.get('char', False)
-                        # amt_char = request.POST.get('amt_char')
-                        fwood = request.POST.get('fwood', False)
-                        # amt_fwood = request.POST.get('amt_fwood')
-                        if ln:
-                            f_ln = "LIGHT/NATIVE"
-                        else:
-                            f_ln = ""
-                            pass
-                        if conc:
-                            f_conc = "CONCRETE"
-                        else:
-                            f_conc = ""
-                            pass
-                        if mix:
-                            f_mix = "MIXED"
-                        else:
-                            f_mix = ""
-                        if lpg:
-                            f_lpg = "LPG"
-                            # f_amt_lpg =float(amt_lpg)
-                        else:
-                            f_lpg = ""
-                            # f_amt_lpg = 0
-                            pass
-                        if elec:
-                            f_elec = "ELECTRICITY"
-                            # f_amt_elec =float(amt_elec)
-                        else:
-                            f_elec = ""
-                            # f_amt_elec = 0
-                            pass
-                        if char:
-                            f_char = "CHARCOAL"
-                            # f_amt_char =float(amt_char)
-                        else:
-                            f_char = ""
-                            # f_amt_char = 0
-                            pass
-                        if fwood:
-                            f_fwood = "FIREWOOD"
-                            # f_amt_fwood =float(amt_fwood)
-                        else:
-                            f_fwood = ""
-                            # f_amt_fwood = 0
-                        housing_mat = [f_ln,f_conc,f_mix]
-                        fuel_src = [f_lpg,f_elec,f_char,f_fwood]
-                        # amt_fuel_src = [f_amt_lpg,f_amt_elec,f_amt_char,f_amt_fwood]
-                        prob_pres = request.POST.get('pr')
-                        zz = SCSR(uis=uis_id,employer = employer,special_skill=skill,date_admission=doa,room = ridat,tdd = tdd,housing_material = housing_mat,fuel_source = fuel_src,problem_presented = prob_pres)
-                        zz.save()
-                    else:
-                        scsrcheck = []
-                        pass
                     mssatcheck = request.POST.get('mssatcheck',False)
                     if mssatcheck:
                         fuel_src = []
@@ -712,97 +627,12 @@ def add_uis(request, hospno,code, toecode):
                         upd_has_mssat.has_mssat = True
                         upd_has_mssat.save()
                         redirect_url_with_args = f'/{uis_id}/new_mssat_pdf'
-                    elif scsrcheck:
-                        upd_has_scsr = UIS.objects.get(uis = uis_add.uis)
-                        upd_has_scsr.has_scsr = True
-                        upd_has_scsr.save()
-                        redirect_url_with_args = f'/{uis_id}/scsr_pdf'
                     else:
                         redirect_url_with_args = f'/{uis_id}/uis_pdf'
                     messages.success(request, "SUCCESSFULLY ADDED")
                     return redirect(redirect_url_with_args)
 
         return render(request, 'uis/add_uis.html',{'time_ended':time_ended,'time_show':time_show,'date_show':date_show,'get_rcd':get_rcd,'mms_no_auto':mms_no_auto,'date_today':date_today,'user':request.session['name'],'complain':complain,'toecode':toecode,'age':age,'rel':rel,'nat':nat,'cstat':cstat,'occu':occu,'address':get_address,'pob':pob,'code':code,'hospno':hospno,'fullname':fullname,'gender':gender,'bday':bdate})
-    else:
-        return HttpResponseRedirect("/auth_login")
-def add_scsr(request, uis):
-    if request.session.get('employee_id') is not None:
-        now = datetime.now()
-        date_today = datetime.strftime(now, '%Y-%m-%d')
-        if request.method == 'POST':
-            housing_mat = []
-            fuel_src = []
-            # amt_fuel_src = []
-            uis_id = UIS.objects.get(uis = uis)
-            employer = request.POST.get('employer')
-            skill = request.POST.get('skill')
-            doa = request.POST.get('doa')
-            ridat = request.POST.get('ridat')
-            tdd = request.POST.get('tdd')
-            ln = request.POST.get('ln', False)
-            conc = request.POST.get('conc', False)
-            mix = request.POST.get('mix', False)
-            lpg = request.POST.get('lpg', False)
-            # amt_lpg = request.POST.get('amt_lpg')
-            elec = request.POST.get('elec', False)
-            # amt_elec = request.POST.get('amt_elec')
-            char = request.POST.get('char', False)
-            # amt_char = request.POST.get('amt_char')
-            fwood = request.POST.get('fwood', False)
-            # amt_fwood = request.POST.get('amt_fwood')
-            if ln:
-                f_ln = "LIGHT/NATIVE"
-            else:
-                f_ln = ""
-                pass
-            if conc:
-                f_conc = "CONCRETE"
-            else:
-                f_conc = ""
-                pass
-            if mix:
-                f_mix = "MIXED"
-            else:
-                f_mix = ""
-
-            if lpg:
-                f_lpg = "LPG"
-                # f_amt_lpg =float(amt_lpg)
-            else:
-                f_lpg = ""
-                # f_amt_lpg = 0
-                pass
-            if elec:
-                f_elec = "ELECTRICITY"
-                # f_amt_elec =float(amt_elec)
-            else:
-                f_elec = ""
-                # f_amt_elec = 0
-                pass
-            if char:
-                f_char = "CHARCOAL"
-                # f_amt_char =float(amt_char)
-            else:
-                f_char = ""
-                # f_amt_char = 0
-                pass
-            if fwood:
-                f_fwood = "FIREWOOD"
-                # f_amt_fwood =float(amt_fwood)
-            else:
-                f_fwood = ""
-                # f_amt_fwood = 0
-            housing_mat = [f_ln,f_conc,f_mix]
-            fuel_src = [f_lpg,f_elec,f_char,f_fwood]
-            # amt_fuel_src = [f_amt_lpg,f_amt_elec,f_amt_char,f_amt_fwood]
-            prob_pres = request.POST.get('pr')
-            zz = SCSR(uis=uis_id,employer = employer,special_skill=skill,date_admission=doa,room = ridat,tdd = tdd,housing_material = housing_mat,fuel_source = fuel_src,problem_presented = prob_pres)
-            zz.save()
-            upd_has_scsr = UIS.objects.get(uis = uis)
-            upd_has_scsr.has_scsr = True
-            upd_has_scsr.save()
-            messages.success(request, "SUCCESSFULLY ADDED")
-        return render(request, 'uis/add_scsr.html',{'date_today':date_today,'uis':uis,'user':request.session['name']})
     else:
         return HttpResponseRedirect("/auth_login")
 def add_mssat(request, uis):
@@ -1395,21 +1225,6 @@ def update_msstool(request,mssat):
     else:
         return HttpResponseRedirect("/auth_login")
 
-def update_scsr(request,scsr):
-    if request.session.get('employee_id') is not None:
-        try:
-            scsr_details = SCSR.objects.get(scsr = scsr)
-            conv_hm = scsr_details.housing_material.replace("[","").replace("]","").replace("'","")
-            conv_hm_space = conv_hm.replace(" ","")
-            new_hm = conv_hm_space.split(',')
-            conv_fs = scsr_details.fuel_source.replace("[","").replace("]","").replace("'","")
-            conv_fs_space = conv_fs.replace(" ","")
-            new_fs = conv_fs_space.split(',')
-        except scsr_details.DoesNotExist:
-            raise Http404("Patient Doest not exist")
-        return render(request, 'uis/upd_scsr.html',{'hm':new_hm,'fs':new_fs,'scsr_details':scsr_details,'user':request.session['name']})
-    else:
-        return HttpResponseRedirect("/auth_login")
 
 def process_update_mssat(request, mssat):
     if request.session.get('employee_id') is not None:
@@ -1501,99 +1316,6 @@ def process_update_mssat(request, mssat):
     else:
         return HttpResponseRedirect("/auth_login")
 
-def update_scsr(request,scsr):
-    if request.session.get('employee_id') is not None:
-        try:
-            scsr_details = SCSR.objects.get(scsr = scsr)
-            conv_hm = scsr_details.housing_material.replace("[","").replace("]","").replace("'","")
-            conv_hm_space = conv_hm.replace(" ","")
-            new_hm = conv_hm_space.split(',')
-            conv_fs = scsr_details.fuel_source.replace("[","").replace("]","").replace("'","")
-            conv_fs_space = conv_fs.replace(" ","")
-            new_fs = conv_fs_space.split(',')
-        except scsr_details.DoesNotExist:
-            raise Http404("Patient Doest not exist")
-        return render(request, 'uis/upd_scsr.html',{'hm':new_hm,'fs':new_fs,'scsr_details':scsr_details,'user':request.session['name']})
-    else:
-        return HttpResponseRedirect("/auth_login")
-
-def process_update_scsr(request, scsr):
-    if request.session.get('employee_id') is not None:
-        now = datetime.now()
-        date_today = datetime.strftime(now, '%Y-%m-%d')
-        try:
-            if request.method == 'POST':
-                housing_mat = []
-                fuel_src = []
-                employer = request.POST.get('employer')
-                skill = request.POST.get('skill')
-                doa = request.POST.get('doa')
-                ridat = request.POST.get('ridat')
-                tdd = request.POST.get('tdd')
-                ln = request.POST.get('ln', False)
-                conc = request.POST.get('conc', False)
-                mix = request.POST.get('mix', False)
-                lpg = request.POST.get('lpg', False)
-                elec = request.POST.get('elec', False)
-                char = request.POST.get('char', False)
-                fwood = request.POST.get('fwood', False)
-                if ln:
-                    f_ln = "LIGHT/NATIVE"
-                else:
-                    f_ln = ""
-                    pass
-                if conc:
-                    f_conc = "CONCRETE"
-                else:
-                    f_conc = ""
-                    pass
-                if mix:
-                    f_mix = "MIXED"
-                else:
-                    f_mix = ""
-
-                if lpg:
-                    f_lpg = "LPG"
-                else:
-                    f_lpg = ""
-                    pass
-                if elec:
-                    f_elec = "ELECTRICITY"
-                else:
-                    f_elec = ""
-                    pass
-                if char:
-                    f_char = "CHARCOAL"
-                else:
-                    f_char = ""
-                    pass
-                if fwood:
-                    f_fwood = "FIREWOOD"
-                else:
-                    f_fwood = ""
-                housing_mat = [f_ln,f_conc,f_mix]
-                fuel_src = [f_lpg,f_elec,f_char,f_fwood]
-                prob_pres = request.POST.get('pr')
-                
-        except (KeyError, SCSR.DoesNotExist):
-            return render(request, 'uis/upd_scsr.html',{
-                'error_message':"PROBLEM IN UPDATING",
-                })
-        else:
-            scsr_id = SCSR.objects.get(scsr = scsr)
-            scsr_id.employer = employer
-            scsr_id.special_skill = skill
-            scsr_id.date_admission = doa
-            scsr_id.room = ridat
-            scsr_id.tdd = tdd
-            scsr_id.housing_material = housing_mat
-            scsr_id.fuel_source = fuel_src
-            scsr_id.problem_presented = prob_pres
-            scsr_id.save()
-            redirect_url_with_args = f'/{scsr}/update_scsr'
-            return redirect(redirect_url_with_args)
-    else:
-        return HttpResponseRedirect("/auth_login")
 def uis_excel(request):
     if request.session.get('employee_id') is not None:
         uis_excel = UIS_copy.objects.all()
@@ -2233,77 +1955,6 @@ def add_uis_excel(request):
                         g.save()
                 else:
                     reccom_data = []
-                scsrcheck = request.POST.get('scsrcheck',False)
-                if scsrcheck:
-                    housing_mat = []
-                    fuel_src = []
-                    # amt_fuel_src = []
-                    employer = request.POST.get('employer')
-                    skill = request.POST.get('skill')
-                    doa = request.POST.get('doa')
-                    ridat = request.POST.get('ridat')
-                    tdd = request.POST.get('tdd')
-                    ln = request.POST.get('ln', False)
-                    conc = request.POST.get('conc', False)
-                    mix = request.POST.get('mix', False)
-                    lpg = request.POST.get('lpg', False)
-                        # amt_lpg = request.POST.get('amt_lpg')
-                    elec = request.POST.get('elec', False)
-                        # amt_elec = request.POST.get('amt_elec')
-                    char = request.POST.get('char', False)
-                        # amt_char = request.POST.get('amt_char')
-                    fwood = request.POST.get('fwood', False)
-                        # amt_fwood = request.POST.get('amt_fwood')
-                    if ln:
-                        f_ln = "LIGHT/NATIVE"
-                    else:
-                        f_ln = ""
-                        pass
-                    if conc:
-                        f_conc = "CONCRETE"
-                    else:
-                        f_conc = ""
-                        pass
-                    if mix:
-                        f_mix = "MIXED"
-                    else:
-                        f_mix = ""
-                    if lpg:
-                        f_lpg = "LPG"
-                            # f_amt_lpg =float(amt_lpg)
-                    else:
-                        f_lpg = ""
-                            # f_amt_lpg = 0
-                        pass
-                    if elec:
-                        f_elec = "ELECTRICITY"
-                            # f_amt_elec =float(amt_elec)
-                    else:
-                        f_elec = ""
-                            # f_amt_elec = 0
-                        pass
-                    if char:
-                        f_char = "CHARCOAL"
-                            # f_amt_char =float(amt_char)
-                    else:
-                        f_char = ""
-                            # f_amt_char = 0
-                        pass
-                    if fwood:
-                        f_fwood = "FIREWOOD"
-                            # f_amt_fwood =float(amt_fwood)
-                    else:
-                        f_fwood = ""
-                            # f_amt_fwood = 0
-                    housing_mat = [f_ln,f_conc,f_mix]
-                    fuel_src = [f_lpg,f_elec,f_char,f_fwood]
-                        # amt_fuel_src = [f_amt_lpg,f_amt_elec,f_amt_char,f_amt_fwood]
-                    prob_pres = request.POST.get('pr')
-                    zz = SCSR(uis=uis_id,employer = employer,special_skill=skill,date_admission=doa,room = ridat,tdd = tdd,housing_material = housing_mat,fuel_source = fuel_src,problem_presented = prob_pres)
-                    zz.save()
-                else:
-                    scsrcheck = []
-                    pass
                 mssatcheck = request.POST.get('mssatcheck',False)
                 if mssatcheck:
                     fuel_src = []
@@ -2373,11 +2024,6 @@ def add_uis_excel(request):
                     upd_has_mssat.has_mssat = True
                     upd_has_mssat.save()
                     redirect_url_with_args = f'/{uis_id}/mssat_pdf'
-                elif scsrcheck:
-                    upd_has_scsr = UIS.objects.get(uis = uis_add.uis)
-                    upd_has_scsr.has_scsr = True
-                    upd_has_scsr.save()
-                    redirect_url_with_args = f'/{uis_id}/scsr_pdf'
                 else:
                     redirect_url_with_args = f'/{uis_id}/uis_pdf'
                 messages.success(request, "SUCCESSFULLY ADDED")
@@ -2730,77 +2376,6 @@ def walkin_uis(request):
                         g.save()
                 else:
                     reccom_data = []
-                scsrcheck = request.POST.get('scsrcheck',False)
-                if scsrcheck:
-                    housing_mat = []
-                    fuel_src = []
-                    # amt_fuel_src = []
-                    employer = request.POST.get('employer')
-                    skill = request.POST.get('skill')
-                    doa = request.POST.get('doa')
-                    ridat = request.POST.get('ridat')
-                    tdd = request.POST.get('tdd')
-                    ln = request.POST.get('ln', False)
-                    conc = request.POST.get('conc', False)
-                    mix = request.POST.get('mix', False)
-                    lpg = request.POST.get('lpg', False)
-                        # amt_lpg = request.POST.get('amt_lpg')
-                    elec = request.POST.get('elec', False)
-                        # amt_elec = request.POST.get('amt_elec')
-                    char = request.POST.get('char', False)
-                        # amt_char = request.POST.get('amt_char')
-                    fwood = request.POST.get('fwood', False)
-                        # amt_fwood = request.POST.get('amt_fwood')
-                    if ln:
-                        f_ln = "LIGHT/NATIVE"
-                    else:
-                        f_ln = ""
-                        pass
-                    if conc:
-                        f_conc = "CONCRETE"
-                    else:
-                        f_conc = ""
-                        pass
-                    if mix:
-                        f_mix = "MIXED"
-                    else:
-                        f_mix = ""
-                    if lpg:
-                        f_lpg = "LPG"
-                            # f_amt_lpg =float(amt_lpg)
-                    else:
-                        f_lpg = ""
-                            # f_amt_lpg = 0
-                        pass
-                    if elec:
-                        f_elec = "ELECTRICITY"
-                            # f_amt_elec =float(amt_elec)
-                    else:
-                        f_elec = ""
-                            # f_amt_elec = 0
-                        pass
-                    if char:
-                        f_char = "CHARCOAL"
-                            # f_amt_char =float(amt_char)
-                    else:
-                        f_char = ""
-                            # f_amt_char = 0
-                        pass
-                    if fwood:
-                        f_fwood = "FIREWOOD"
-                            # f_amt_fwood =float(amt_fwood)
-                    else:
-                        f_fwood = ""
-                            # f_amt_fwood = 0
-                    housing_mat = [f_ln,f_conc,f_mix]
-                    fuel_src = [f_lpg,f_elec,f_char,f_fwood]
-                        # amt_fuel_src = [f_amt_lpg,f_amt_elec,f_amt_char,f_amt_fwood]
-                    prob_pres = request.POST.get('pr')
-                    zz = SCSR(uis=uis_id,employer = employer,special_skill=skill,date_admission=doa,room = ridat,tdd = tdd,housing_material = housing_mat,fuel_source = fuel_src,problem_presented = prob_pres)
-                    zz.save()
-                else:
-                    scsrcheck = []
-                    pass
                 mssatcheck = request.POST.get('mssatcheck',False)
                 if mssatcheck:
                     fuel_src = []
@@ -2870,11 +2445,6 @@ def walkin_uis(request):
                     upd_has_mssat.has_mssat = True
                     upd_has_mssat.save()
                     redirect_url_with_args = f'/{uis_id}/mssat_pdf'
-                elif scsrcheck:
-                    upd_has_scsr = UIS.objects.get(uis = uis_add.uis)
-                    upd_has_scsr.has_scsr = True
-                    upd_has_scsr.save()
-                    redirect_url_with_args = f'/{uis_id}/scsr_pdf'
                 else:
                     redirect_url_with_args = f'/{uis_id}/uis_pdf'
                 messages.success(request, "SUCCESSFULLY ADDED")
@@ -3283,77 +2853,6 @@ def process_duplicate_uis(request):
                         g.save()
                 else:
                     reccom_data = []
-                scsrcheck = request.POST.get('scsrcheck',False)
-                if scsrcheck:
-                    housing_mat = []
-                    fuel_src = []
-                    # amt_fuel_src = []
-                    employer = request.POST.get('employer')
-                    skill = request.POST.get('skill')
-                    doa = request.POST.get('doa')
-                    ridat = request.POST.get('ridat')
-                    tdd = request.POST.get('tdd')
-                    ln = request.POST.get('ln', False)
-                    conc = request.POST.get('conc', False)
-                    mix = request.POST.get('mix', False)
-                    lpg = request.POST.get('lpg', False)
-                        # amt_lpg = request.POST.get('amt_lpg')
-                    elec = request.POST.get('elec', False)
-                        # amt_elec = request.POST.get('amt_elec')
-                    char = request.POST.get('char', False)
-                        # amt_char = request.POST.get('amt_char')
-                    fwood = request.POST.get('fwood', False)
-                        # amt_fwood = request.POST.get('amt_fwood')
-                    if ln:
-                        f_ln = "LIGHT/NATIVE"
-                    else:
-                        f_ln = ""
-                        pass
-                    if conc:
-                        f_conc = "CONCRETE"
-                    else:
-                        f_conc = ""
-                        pass
-                    if mix:
-                        f_mix = "MIXED"
-                    else:
-                        f_mix = ""
-                    if lpg:
-                        f_lpg = "LPG"
-                            # f_amt_lpg =float(amt_lpg)
-                    else:
-                        f_lpg = ""
-                            # f_amt_lpg = 0
-                        pass
-                    if elec:
-                        f_elec = "ELECTRICITY"
-                            # f_amt_elec =float(amt_elec)
-                    else:
-                        f_elec = ""
-                            # f_amt_elec = 0
-                        pass
-                    if char:
-                        f_char = "CHARCOAL"
-                            # f_amt_char =float(amt_char)
-                    else:
-                        f_char = ""
-                            # f_amt_char = 0
-                        pass
-                    if fwood:
-                        f_fwood = "FIREWOOD"
-                            # f_amt_fwood =float(amt_fwood)
-                    else:
-                        f_fwood = ""
-                            # f_amt_fwood = 0
-                    housing_mat = [f_ln,f_conc,f_mix]
-                    fuel_src = [f_lpg,f_elec,f_char,f_fwood]
-                        # amt_fuel_src = [f_amt_lpg,f_amt_elec,f_amt_char,f_amt_fwood]
-                    prob_pres = request.POST.get('pr')
-                    zz = SCSR(uis=uis_id,employer = employer,special_skill=skill,date_admission=doa,room = ridat,tdd = tdd,housing_material = housing_mat,fuel_source = fuel_src,problem_presented = prob_pres)
-                    zz.save()
-                else:
-                    scsrcheck = []
-                    pass
                 mssatcheck = request.POST.get('mssatcheck',False)
                 if mssatcheck:
                     fuel_src = []
@@ -3423,11 +2922,6 @@ def process_duplicate_uis(request):
                     upd_has_mssat.has_mssat = True
                     upd_has_mssat.save()
                     redirect_url_with_args = f'/{uis_id}/mssat_pdf'
-                elif scsrcheck:
-                    upd_has_scsr = UIS.objects.get(uis = uis_add.uis)
-                    upd_has_scsr.has_scsr = True
-                    upd_has_scsr.save()
-                    redirect_url_with_args = f'/{uis_id}/scsr_pdf'
                 else:
                     redirect_url_with_args = f'/{uis_id}/uis_pdf'
                 messages.success(request, "SUCCESSFULLY ADDED")

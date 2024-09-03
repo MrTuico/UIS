@@ -1,0 +1,285 @@
+{% extends 'main_base.html' %}
+{% load static %}
+{% block title %}
+SOCIAL CASE STUDY REPORT(EDIT)
+{% endblock %}
+{% block content %}
+<style>
+fieldset {
+  background-color: #eeeeee;
+}
+
+legend {
+  background-color: rgb(118, 165, 184);
+  color: white;
+  padding: 2px 5px;
+}
+.alert {
+    padding: 15px;
+    background-color: #cb5e61;
+    color: white;
+    margin-bottom: 15px;
+    display: none; /* Hide the alert by default */
+  }
+  input[type=text],input[type=number],input[type=date] {
+  width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  box-sizing: border-box;
+  border: none;
+  border-bottom: 2px solid rgb(58, 57, 57);
+}
+</style>
+<div class="row">
+<div class="col-md-12"> 
+     <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold" style="color: rgb(231, 171, 56)">SOCIAL CASE STUDY REPORT(EDIT)</h6>
+        </div>
+        {% if messages %}
+        <div id="myAlert" class="alert">
+            {% for m in messages %}
+            <strong>{{ m }}</strong>
+            {% endfor %}
+          </div>
+          {% endif%}
+       <div class="card-body">
+        <form action="{% url 'process_edit_scp' scp.scp mssat %}"  method="POST">
+            {% csrf_token %}
+    <fieldset>
+        <legend>IV. PSYCHOSOCIAL ASSESSMENT</legend>
+        <div class="row m-2">
+              
+            <div class="col-md-12">
+                <textarea name="pa" class="form-control"  rows="5" oninput="this.value = this.value.toUpperCase()" value="{{ scp.psychosocial_assessment }}" required>{{ scp.psychosocial_assessment }}</textarea>
+            </div>
+        </div>
+        <hr>
+    </fieldset>
+   
+
+    <fieldset>
+        <legend>V. SOCIAL CARE PLAN</legend>
+        <a href="#" class="btn btn-success float-right m-2"  data-toggle="modal" data-target="#splanModal">ADD SOCIAL CARE PLAN</a>
+        <input type="hidden" class="form-control" name="scpdata" id="scp_data">
+        {% include 'includes/add_social_care_plan.html' %}
+        <br><br>
+            <div class="row m-2">
+                <div class="col-md-12">
+                  <table class="table table-bordered table-hover table-striped"  width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>AREAH</th>
+                            <th>PROBLEM/NEEDS</th>
+                            <th>GOALS/OBJECTIVES</th>
+                            <th>TREATMENT INTERVENTIONS</th>
+                            <th>FREQUENCY/DURATION</th>
+                            <th>RESPONSIBLE PERSON</th>
+                            <th>EXPECTED OUTPUT</th>
+                            <th>ACTION</th>
+                        </tr>
+                    </thead>
+                    <tbody id="rtbody">
+                    </tbody>
+
+                    <tfoot>
+                        
+                        {% for i in scp_tab %}
+                        <tr>
+                            <td>
+                                {% if i.area == '1' %}
+                                <p>HEALTH/TREATMENT</p>
+                                {% elif i.area == '2' %}
+                                <p>PSYCHOSOCIAL ASSESSMENT</p>
+                                {% elif i.area == '3' %}
+                                <p>AFFECTIONAL SUPPORT SYSTEM</p>
+                                {% elif i.area == '4' %}
+                                <p>BASIC NEEDS (FINANCIAL/HOUSING/CLOTHING)</p>
+                                {% else %}
+                                <p>None</p>
+                                {% endif %}
+                               
+                            </td>
+                            <td>{{ i.problem_need }}</td>
+                            <td>{{ i.goals_objective }}</td>
+                            <td>{{ i.treatment_intervention }}</td>
+                            <td>{{ i.frequency_duration }}</td>
+                            <td>{{ i.responsible_person }}</td>
+                            <td>{{ i.expected_output }}</td>
+                            <td><a href="{% url 'delete_scp_tab' i.scp_table mssat %}" ><i class="fa fa-trash"></i></a></td>
+                        </tr>
+                        {% endfor %}
+                    </tfoot>
+                  </table>
+
+                </div>
+            </div> 
+    </fieldset>
+  
+    <fieldset>
+        <legend>VI. RECOMMENDATION FOR OTHER TEAM MEMBERS </legend>
+            <div class="row m-2">
+              
+                <div class="col-md-12">
+                    {% if scp.reccomendation_for_oth_member == 'ELIGIBLE' %}
+                  <input type="checkbox" name="eligible" checked> ELIGIBLE TO AVAIL ASSISTANCE IN MALASAKIT CENTER
+                  {% else %}
+                  <input type="checkbox" name="eligible"> ELIGIBLE TO AVAIL ASSISTANCE IN MALASAKIT CENTER
+                  {% endif %}
+                </div>
+                <div class="col-md-12">
+                    {% if scp.reccomendation_for_oth_member != 'ELIGIBLE' %}
+                <input type="checkbox" name="oth" checked> OTHERS
+                    {% else %}
+                    <input type="checkbox" name="oth"> OTHERS
+                    {% endif %}
+                </div>
+                <div class="col-md-12">
+                    {% if scp.reccomendation_for_oth_member != 'ELIGIBLE' %}
+                  <input type="text" class="form-control" name="others" value="{{ scp.reccomendation_for_oth_member }}" placeholder="Please specify">
+                  {% else %}
+                  <input type="text" class="form-control" name="others" placeholder="Please specify">
+                  {% endif %}
+                </div>
+            </div>
+    </fieldset>
+    </fieldset>
+    <hr>
+    <button type="submit" style="color: rgb(231, 171, 56)" class="btn btn-warning text-white float-right m-2">SAVE</button>
+</div>
+</form>
+</div>
+</div>
+</div> 
+<script>
+   
+    function showAlert(message, duration) {
+      var alertDiv = document.getElementById("myAlert");
+      alertDiv.innerHTML =  message;
+      alertDiv.style.display = "block"; 
+  
+      setTimeout(function() {
+        alertDiv.style.display = "none"; 
+      }, duration);
+    }
+    showAlert("SUCCESSFULLY ADDED", 3000);
+
+    function clearZeroValue(field) {
+    if (field.value === "0") {
+        field.value = "";
+    }else if(field.value === "NONE"){
+        field.value = "";
+    }
+        }
+  </script>
+  <script>
+    socail_care_plan = []
+    socail_care_plan_set_of_data = []
+
+    function delArrayscp(no){
+        socail_care_plan.splice(no,1);
+        const outputDiv = document.getElementById('rtbody');
+        outputDiv.innerHTML = ''; // Clear previous content
+        document.getElementById('scp_data').value='';
+        socail_care_plan_set_of_data = []
+    function updatereccom(){
+            let new_socail_care_plan = socail_care_plan
+            new_socail_care_plan.forEach((data,index) => {
+                area = data[0];
+                pn = data[1];
+                go = data[2];
+                ti = data[3];
+                fd = data[4];
+                rp = data[5];
+                eo = data[6];
+                q =index;   
+            
+
+        scpDataArray = {area,pn,go,ti,fd,rp,eo}
+        socail_care_plan_set_of_data.push(scpDataArray);
+        let scpArray = JSON.stringify(socail_care_plan_set_of_data);
+        document.getElementById('scp_data').value = scpArray;
+
+    });
+
+    var rtbody = document.getElementById('rtbody');
+    rtbody.innerHTML = ''
+    for (var i = 0; i < socail_care_plan.length; i++) {
+        var row = document.createElement('tr');
+        for (var j = 0; j < socail_care_plan[i].length; j++) {
+            var cell = document.createElement('td');
+            cell.textContent = socail_care_plan[i][j];
+            row.appendChild(cell);
+        } 
+        var deleteButtonCell = document.createElement('td');
+        var deleteButton = document.createElement('i');
+        deleteButton.className = 'fa fa-trash';
+        deleteButton.setAttribute('onclick', 'delArrayscp("' + i + '")');
+
+        deleteButtonCell.appendChild(deleteButton);
+        row.appendChild(deleteButtonCell);
+        rtbody.appendChild(row);
+     
+
+    }
+        }
+        updatereccom();
+    }
+    function add_social_plan(){
+        var area = document.getElementById('area').value || '';
+        var pn = document.getElementById('pn').value || '';
+        var go = document.getElementById('go').value || '';
+        var ti = document.getElementById('ti').value || '';
+        var fd = document.getElementById('fd').value || '';
+        var rp = document.getElementById('rp').value || '';
+        var eo = document.getElementById('eo').value || '';
+        
+       
+        scpsArray = [area,pn,go,ti,fd,rp,eo];
+        socail_care_plan.push(scpsArray);
+        socail_care_plan.forEach((data,index) => {
+        area = data[0];
+        pn = data[1];
+        go = data[2];
+        ti = data[3];
+        fd = data[4];
+        rp = data[5];
+        eo = data[6];
+        q =index;  
+    });
+    var rtbody = document.getElementById('rtbody');
+    rtbody.innerHTML = ''
+    for (var i = 0; i < socail_care_plan.length; i++) {
+        var row = document.createElement('tr');
+        for (var j = 0; j < socail_care_plan[i].length; j++) {
+            var cell = document.createElement('td');
+            cell.textContent = socail_care_plan[i][j];
+            row.appendChild(cell);
+        } 
+        var deleteButtonCell = document.createElement('td');
+        var deleteButton = document.createElement('i');
+        deleteButton.className = 'fa fa-trash';
+        deleteButton.setAttribute('onclick', 'delArrayscp("' + i + '")');
+
+        deleteButtonCell.appendChild(deleteButton);
+        row.appendChild(deleteButtonCell);
+        rtbody.appendChild(row);
+    }
+    function clear_input(){
+        document.getElementById('pn').value = '';
+        document.getElementById('go').value = '';
+        document.getElementById('ti').value = '';
+        document.getElementById('fd').value = '';
+        document.getElementById('rp').value = '';
+        document.getElementById('eo').value = '';
+        }
+        clear_input();  
+
+        scpDataArray = {area,pn,go,ti,fd,rp,eo}
+        socail_care_plan_set_of_data.push(scpDataArray);
+        let scpArray = JSON.stringify(socail_care_plan_set_of_data);
+        document.getElementById('scp_data').value = scpArray;       
+    }
+
+  </script>
+{% endblock %}

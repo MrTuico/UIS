@@ -1,0 +1,70 @@
+{% extends 'main_base.html' %}
+{% load static %}
+{% load humanize %}
+{% block title %}
+Patient History
+{% endblock %}
+{% block content %}
+<div class="row">
+<div class="col-md-12"> 
+     <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h4 class="m-0 font-weight-bold" style="color: rgb(231, 171, 56)">Patient History (UIS LIST)</h4>
+    
+        </div>
+        <div class="m-5"><h5>Patient Name:&nbsp;&nbsp;<b><font color="blue">{{ fullname }}</font> - ({{ hospno }})</b></h5></div>
+
+       
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover table-striped" id="date_charge" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Classification</th>
+                            <th>Informant</th>
+                            <th>Total Amount of Assistance</th>
+                            <th>TOE</th>
+                            <th class="text-center">Action</th>
+               
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if informant %}
+                        {% for i in informant %}
+                        <tr >
+                            <td>
+                                {{ i.date_of_intake }}
+                            </td>
+                            <td>
+                              {{ i.uis_misc.category}}
+                            </td>
+                            <td> 
+                                {{ i.fullname }}
+                            </td>
+                            <td>
+                                {{ i.uis_misc.total_amount_of_assistance|intcomma }}
+                            </td>
+                            <td>{{ i.uis_misc.toe }}</td>
+
+                           <td class="text-center">
+                            <a href="{% url 'edit_uis' i.uis_id i.uis_misc_id %}" class="btn btn-danger">EDIT</a>
+                            <a href="{% url 'copy_uis' i.uis_id i.uis_misc_id %}" class="btn btn-info">COPY</a>
+                            <a href="{% url 'add_mssat' i.uis_id i.uis_misc_id %}"  class="btn btn-warning">ADD MSSAT</a>
+                            <a href="{% url 'uis_pdf' i.uis_id i.uis_misc_id %}"  target="_blank" class="btn btn-primary">PRINT UIS</a>
+                          
+                            </td>
+                           
+                        </tr>
+                        {% endfor %}
+                        {% else %}
+                        <h3><font color="red">NO PATIENT'S HISTORY FOUND</font></h3>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+{% endblock %}

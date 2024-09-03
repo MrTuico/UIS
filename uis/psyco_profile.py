@@ -11,7 +11,7 @@ from uis.models import *
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.platypus import Paragraph
 
-def psycoProfile(request,uis_id):
+def psycoProfile(request,uis_id, uis_misc,mssats):
     padaba = 'uis/static/padabrghgmc.png'
     logo = 'uis/static/logo.png'
     doh_logo = 'uis/static/doh.png'
@@ -51,9 +51,11 @@ def psycoProfile(request,uis_id):
     get_details = UIS.objects.filter(uis = uis_id)
     for i in get_details:
         hospno = i.hospno
-        mswd_cat = i.category
+    get_misc = UIS_misc.objects.filter(uis_misc = uis_misc)
+    for r in get_misc:
+        mswd_cat = r.category
 
-    mssat = MSSAT.objects.filter(uis = uis_id)
+    mssat = MSSAT.objects.filter(uis = uis_id,uis_misc=uis_misc)
     for sc in mssat:
         ward = sc.basic_ward
         mss_no =sc.mss_no
@@ -201,12 +203,14 @@ def psycoProfile(request,uis_id):
     c.setFillColor(white)#C3
     c.rect(0.3*inch,6.2*inch,7.7*inch,1.2*inch,fill=1)
 
-    swa_desc = SWA.objects.filter(uis = uis_id)
-    for sw in swa_desc:
-        desc_swa = sw.swa_desc
+    # swa_desc = SWA.objects.filter(uis = uis_id,uis_misc=uis_misc)
+    psycho_assessment = SCP.objects.filter(uis = uis_id,uis_misc=uis_misc,mssat=mssats)
+    for sw in psycho_assessment:
+        desc_swa = sw.psychosocial_assessment
+        scp_id = sw.scp
         p = Paragraph(desc_swa, style=custom_font_size_swa )
         p.wrapOn(c, 550,20)  
-        p.drawOn(c,0.33*inch,6.3*inch) 
+        p.drawOn(c,0.33*inch,6.25*inch) 
     c.setFillColor("black")
     c.setFont("Times-Bold", 10, leading=None)
     c.drawString(0.25*inch, 5.8*inch, "V. Social Care Plan:")
@@ -219,17 +223,17 @@ def psycoProfile(request,uis_id):
 
     c.setLineWidth(1)
     c.setFillColor(white)
-    c.rect(0.3*inch,5.25*inch,0.8*inch,0.25*inch,fill=1)
+    c.rect(0.3*inch,5.25*inch,0.4*inch,0.25*inch,fill=1)
     c.setFillColor("black")
     c.setFont("Times-Bold", 10, leading=None)
-    c.drawString(0.5*inch, 5.35*inch, "Area")
+    c.drawString(0.34*inch, 5.35*inch, "Area")
 
     c.setLineWidth(1)
     c.setFillColor(white)
-    c.rect(1.1*inch,5.25*inch,1*inch,0.25*inch,fill=1)
+    c.rect(0.7*inch,5.25*inch,1.4*inch,0.25*inch,fill=1)
     c.setFillColor("black")
     c.setFont("Times-Roman", 10, leading=None)
-    c.drawString(1.15*inch, 5.35*inch, "Problem/Needs")
+    c.drawString(1*inch, 5.35*inch, "Problem/Needs")
 
     c.setLineWidth(1)
     c.setFillColor(white)
@@ -269,17 +273,17 @@ def psycoProfile(request,uis_id):
     c.drawString(7.15*inch, 5.39*inch, "Expected")
     c.drawString(7.15*inch, 5.28*inch, "Person")
 
-
+    
     a = 4.75
     b = 0.5
     for i in range(5):
         c.setLineWidth(1)
         c.setFillColor(white)
-        c.rect(0.3*inch,a*inch,0.8*inch,0.5*inch,fill=1)
+        c.rect(0.3*inch,a*inch,0.4*inch,0.5*inch,fill=1)
 
         c.setLineWidth(1)
         c.setFillColor(white)
-        c.rect(1.1*inch,a*inch,1*inch,0.5*inch,fill=1)
+        c.rect(0.7*inch,a*inch,1.4*inch,0.5*inch,fill=1)
 
         c.setLineWidth(1)
         c.setFillColor(white)
@@ -301,6 +305,39 @@ def psycoProfile(request,uis_id):
         c.setFillColor(white)
         c.rect(7.1*inch,a*inch,0.9*inch,0.5*inch,fill=1)
         a-=b
+    scp_tab = scp_table.objects.filter(scp = scp_id)
+    ll =4.77
+    zz = 0.5
+    for bb in scp_tab:
+        c.setFillColor("black")
+        c.setFont("Times-Bold", 10, leading=None)
+        c.drawString(0.47*inch, ll *inch, bb.area)
+        c.setFont("Times-Bold", 7.5, leading=None)
+        # c.drawString(0.72*inch, ll *inch, )
+        p = Paragraph(bb.problem_need, style=custom_font_size_swa )
+        p.wrapOn(c, 98,50)  
+        p.drawOn(c,0.72*inch,ll*inch) 
+        # c.drawString(2.12*inch, ll *inch, bb.goals_objective)
+        p = Paragraph(bb.goals_objective, style=custom_font_size_swa )
+        p.wrapOn(c, 98,50)  
+        p.drawOn(c,2.12*inch,ll*inch) 
+        # c.drawString(3.62*inch, ll *inch, bb.treatment_intervention)
+        p = Paragraph(bb.treatment_intervention, style=custom_font_size_swa )
+        p.wrapOn(c, 70,50)  
+        p.drawOn(c,3.62*inch,ll*inch) 
+        # c.drawString(4.62*inch, ll *inch, bb.frequency_duration)
+        p = Paragraph(bb.frequency_duration, style=custom_font_size_swa )
+        p.wrapOn(c, 98,50)  
+        p.drawOn(c,4.62*inch,ll*inch) 
+        # c.drawString(6.12*inch, ll *inch, bb.responsible_person)
+        p = Paragraph(bb.responsible_person, style=custom_font_size_swa )
+        p.wrapOn(c, 70,50)  
+        p.drawOn(c,6.12*inch,ll*inch) 
+        # c.drawString(7.12*inch, ll *inch, bb.expected_output)
+        p = Paragraph(bb.expected_output, style=custom_font_size_swa )
+        p.wrapOn(c, 65,50)  
+        p.drawOn(c,7.12*inch,ll*inch) 
+        ll -=zz
 
     c.setFillColor("black")
     c.setFont("Times-Bold", 10, leading=None)
@@ -308,6 +345,16 @@ def psycoProfile(request,uis_id):
 
     c.setFillColor(white)#C3
     c.rect(0.3*inch,1.9*inch,7.7*inch,0.5*inch,fill=1)
+
+    rot_m = SCP.objects.filter(uis = uis_id,uis_misc=uis_misc,mssat=mssats)
+    for s in rot_m:
+        if s.reccomendation_for_oth_member == 'ELIGIBLE':
+            show = "ELIGIBLE TO AVAIL ASSISTANCE IN MALASAKIT CENTER"
+        else:
+            show = s.reccomendation_for_oth_member
+        p = Paragraph(show, style=custom_font_size_swa )
+        p.wrapOn(c, 550,20)  
+        p.drawOn(c,0.33*inch,1.93*inch) 
 
     c.setFillColor("black")
     c.setFont("Times-Bold", 7, leading=None)

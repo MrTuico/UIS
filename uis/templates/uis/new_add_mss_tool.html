@@ -53,7 +53,7 @@ select{
           </div>
           {% endif%}
        <div class="card-body">
-        <form action="{% url 'add_mssat' uis %}" method="POST">
+        <form action="{% url 'add_mssat' uis uis_misc %}" target="_blank" method="POST">
             {% csrf_token %}
     <fieldset>
         <legend>DEMOGRAPHIC DATA</legend>

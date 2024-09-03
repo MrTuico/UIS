@@ -357,12 +357,12 @@ select{
                         <div class="row m-2">
                         <div class="col-md-6">
                             <label title="CLICK ME TO GET THE TOTAL EXPENSE" onclick="get_total_expenses()"><b><font color="red">TOTAL EXPENSES:</font></b></label>
-                            <input title="CLICK ME TO GET THE TOTAL EXPENSE" onclick="get_total_expenses()" title="TOTAL EXPENSES" type="text" name="tot_expense" value="0"  id ="tot_exps" class="form-control">
+                            <input title="CLICK ME TO GET THE TOTAL EXPENSE" onclick="get_total_expenses()" title="TOTAL EXPENSES" type="text" name="tot_expense" required  id ="tot_exps" class="form-control">
                         </div>
 
                         <div class="col-md-6">
                             <label><b><font color="red">TOTAL INCOME:</font></b></label>
-                            <input title="TOTAL Income" type="text" name="tot_income" id ="tot_incomes" class="form-control" value="0">
+                            <input title="TOTAL Income" type="text" name="tot_income" id ="tot_incomes" class="form-control" required>
                         </div>
                     </div>
 
@@ -374,7 +374,7 @@ select{
             <div class="row m-2">
                 <div class="col-md-4">
                 <input type="checkbox" checked name="hcop">HEALTH CONDITION OF PATIENT(specify)
-                <input type="text" value="{{ complain }}" oninput="this.value = this.value.toUpperCase()" id="comaR" class="form-control" name="hcop_desc">
+                <input type="text" oninput="this.value = this.value.toUpperCase()" id="comaR" class="form-control" name="hcop_desc">
                 </div>
                 <div class="col-md-4">
                 <input type="checkbox" name="fn">FOOD/NUTRITION (specify)
@@ -396,7 +396,7 @@ select{
                 </div>
                 <div class="col-md-4">
                 <input type="checkbox" checked name="osy">OTHERS (specify)
-                <input type="text" oninput="this.value = this.value.toUpperCase()" value="{{ toecode }}" class="form-control" name="osy_desc">
+                <input type="text" oninput="this.value = this.value.toUpperCase()" value="OPD" class="form-control" name="osy_desc">
                 </div>
             </div>
             <hr>
@@ -406,7 +406,7 @@ select{
             <div class="row m-2">
                 <div class="col-md-8 mb-5">
                     <label>Chief Complain</label>
-                    <input type="text" value="{{ complain }}" class="form-control">
+                    <input type="text" value="optional" readonly class="form-control">
                 </div> 
 
                 <div class="col-md-4 mb-5">
@@ -422,10 +422,12 @@ select{
                     <textarea spellcheck="true" name="swa" id="" class="form-control"  rows="5" oninput="this.value = this.value.toUpperCase()" required></textarea>
                 </div>
             </div>
+        </br>
     </fieldset>
 
     <fieldset>
         <legend>VI. RECOMMENDATIONS (Rekomendasyon)</legend>
+        <input type="hidden" id="reccom_amt_tot" name="tot_reccom_amt" value="0">
         <a href="#" class="btn btn-success float-right m-2"  data-toggle="modal" data-target="#recomModal">ADD</a>
         <input type="hidden" class="form-control" name="reccomdata" id="reccom_data">
         {% include 'includes/reccomendations.html' %}
@@ -448,252 +450,20 @@ select{
                 </div>
             </div>
     </fieldset>
-    <hr>
-    <fieldset>
-        <legend><input type="checkbox" style="height: 20px;width: 20px;" id="scsr" name="scsrcheck"> SOCIAL CASE STUDY REPORT </legend>
-        <div id="scsrForm">
-        <fieldset >
-            <div class="row m-4">
-                <div class="col-md-6">
-                    <label>EMPLOYER:</label>
-                    <input type="text" name="employer" oninput="this.value = this.value.toUpperCase()" class="form-control" value="NONE" onclick="clearZeroValue(this)">
-                </div>
-                <div class="col-md-6">
-                    <label>SPECIAL SKILL:</label>
-                    <input type="text" name="skill" oninput="this.value = this.value.toUpperCase()" class="form-control" value ="NONE" onclick="clearZeroValue(this)">
-                </div>
-                <div class="col-md-4">
-                    <label>DATE OF ADMISSION:(dd/mm/yyyy)</label>
-                    <input type="date" name="doa" class="form-control" value="{{ date_today }}">
-                </div>
-                <div class="col-md-4">
-                    <label>ROOM IN DATE AND TIME:</label>
-                    <input type="text" name="ridat" value="{{ date_today }}" oninput="this.value = this.value.toUpperCase()" class="form-control">
-                </div>
-                <div class="col-md-4">
-                    <label>TYPE OF DEFORMITY/DISABILITY:</label>
-                    <input type="text" name="tdd" oninput="this.value = this.value.toUpperCase()" class="form-control" value ="NONE" onclick="clearZeroValue(this)">
-                </div>
-            </div>
-            <hr>
-        </fieldset>
-       
-    
-        <fieldset>
-                <div class="row m-2">
-                    <div class="col-md-12">
-                    <fieldset>
-                        <legend  style="background-color: rgb(83, 151, 146);">HOUSING MATERIAL</legend>
-                        <div class="row">
-                        <div class="col-md-4">
-                        <input type="checkbox" name="ln">LIGHT/NATIVE
-                        </div>
-                        <div class="col-md-4">
-                            <input type="checkbox" name="conc">CONCRETE
-                        </div>
-                        <div class="col-md-4">
-                            <input type="checkbox" name="mix">MIXED
-                        </div>
-                        </div>
-                    </fieldset>
-                    </div>
-                    <div class="col-md-12 mt-4">
-                        <fieldset>
-                            <legend  style="background-color: rgb(83, 151, 146);">FUEL SOURCE</legend>
-                            <div class="row">
-                            <div class="col-md-3">
-                            <input type="checkbox" name="lpg">LPG
-                            <!-- <input type="number" class="form-control" name="amt_lpg"  value="0"> -->
-                            </div>
-                            <div class="col-md-3">
-                                <input type="checkbox" name="elec">ELECTRIC
-                                <!-- <input type="number" class="form-control" name="amt_elec"  value="0"> -->
-                            </div>
-                            <div class="col-md-3">
-                                <input type="checkbox" name="char">CHARCOAL
-                                <!-- <input type="number" class="form-control" name="amt_char"  value="0"> -->
-                            </div>
-                            <div class="col-md-3">
-                                <input type="checkbox" name="fwood">FIREWOOD
-                                <!-- <input type="number" class="form-control" name="amt_fwood"  value="0"> -->
-                            </div>
-                            </div>
-                        </fieldset>
-                        </div>
-                        <div class="col-md-12 mt-4">
-    
-                     </div>       
-                </div>          
-        </fieldset>
-      <hr>
-        <fieldset>
-                <div class="row m-2">
-                    <div class="col-md-12">
-                        <label>Problem Presented</label>
-                        <textarea name="pr" id="" class="form-control"  rows="5" oninput="this.value = this.value.toUpperCase()"></textarea>
-                    </div>
-                </div>
-        </fieldset>
     </div>
         </fieldset>
    
     </fieldset>
-    <hr>
-    <fieldset>
-        <legend><input type="checkbox" style="height: 20px;width: 20px;" id="mssat" name="mssatcheck"> MEDICAL SOCIAL SERVICE ASSESSMENT TOOL </legend>
-        <div id="mssatForm">
-        <fieldset>
-          
-            <div class="row m-4">
-                <legend>DEMOGRAPHIC DATA</legend>
-                <div class="col-md-3">
-                    <label>DATE OF ADMISSION/CONSULTATION:</label>
-                    <input type="date" name="doac" class="form-control" value="{{ date_today }}">
-                </div>
-                <div class="col-md-3">
-                    <label>BASIC WARD/(specify):</label>
-                    <input type="text" name="basic_ward" class="form-control" value="NONE" onclick="clearZeroValue(this)">
-                </div>
-                <div class="col-md-3">
-                    <label>NON BASIC WARD(specify):</label>
-                    <input type="text" name="non_basic" class="form-control" value ="NONE" onclick="clearZeroValue(this)" >
-                </div>
-                <div class="col-md-3">
-                    <label>MSS NO::</label>
-                    <input type="text" name="mss_no" class="form-control" value="{{ mms_no_auto }}" >
-                </div>
-                <div class="col-md-3">
-                    <label>SOURCE OF REFERRAL NAME:</label>
-                    <input type="text" name="src_referal_name" class="form-control" value ="NONE" onclick="clearZeroValue(this)">
-                </div>
-                <div class="col-md-3">
-                    <label>CONTACT NUMBER:</label>
-                    <input type="text" name="cnum" class="form-control" value ="NONE" onclick="clearZeroValue(this)">
-                </div>
-                <div class="col-md-6">
-                    <label>ADDRESS:</label>
-                    <input type="text" name="address" class="form-control" value ="NONE" onclick="clearZeroValue(this)">
-                </div>
-                <div class="col-md-3">
-                    <label>EMPLOYER:</label>
-                    <input type="text" name="employer" class="form-control" value ="NONE" onclick="clearZeroValue(this)">
-                </div>
-                <div class="col-md-3">
-                    <label>TYLE OF LIVING ARRANGEMENT:</label>
-                   <select name="tla" class="form-control">
-                    <option value="NONE">NONE</option>
-                    <option value="OWNED">OWNED</option>
-                    <option value="RENT">RENT</option>
-                    <option value="SHARED">SHARED</option>
-                    <option value="PRIVATE">PRIVATE</option>
-                    <option value="INSTITUTION">INSTITUTION</option>
-                    <option value="HOMELESS">HOMELESS</option>
-                   </select>
-                </div>
-                <div class="col-md-3">
-                    <label>PHILHEALTH MEMBERSHIP:</label>
-                   <select name="phil_mem" class="form-control">
-                    <option value="DIRECT">DIRECT</option>
-                    <option value="INDIRECT">INDIRECT</option>
-                   </select>
-                </div>
-                <div class="col-md-3">
-                    <label>MSWD CLASSIFICATION:</label>
-                   <select name="mswd_cassif" class="form-control">
-                    <option value="FINANCIALLY CAPABLE">FINANCIALLY CAPABLE</option>
-                    <option value="FINANCIALLY INCAPABLE">FINANCIALLY INCAPABLE</option>
-                   </select>
-                </div>
-            </div>
-            <hr>
-        </fieldset>
-       
-    
-        <fieldset>
-      
-                <div class="row m-2">
-                   
-                        <div class="col-md-6">
-                            <label>MARGINALIZED SECTORAL MEMBERSHIP:</label>
-                           <select name="marginalized_sec_mem" class="form-control">
-                            <option value="ARTISANAL FISHERFOLK">ARTISANAL FISHERFOLK</option>
-                            <option value="FARMERS AND LANDLESS RURAL WORKERS">FARMERS AND LANDLESS RURAL WORKERS</option>
-                            <option value="INDIGENOUS PEOPLE">INDIGENOUS PEOPLE</option>
-                            <option value="FORMAL AND LABOR MIGRANT WORKERS">FORMAL AND LABOR MIGRANT WORKERS</option>
-                            <option value="WORKERS IN INFORMAL SECTORS">WORKERS IN INFORMAL SECTORS</option>
-                            <option value="SENIOR CITIZEN">SENIOR CITIZEN</option>
-                            <option value="PWD">PWD</option>
-                            <option value="VICTIMS OF DISASTERS AND CALAMTIES">VICTIMS OF DISASTERS AND CALAMTIES</option>
-                            <option value="URBAN POOR">URBAN POOR</option>
-                            <option value="OTHERS">OTHERS</option>
-                           </select>
-                        </div>
-                        <div class="col-md-6">
-                            <label>CLOTHING:</label>
-                         <input type="number" name="clothing_amt" class="form-control" value="0" onclick="clearZeroValue(this)">
-                        </div>
-         
-                    <div class="col-md-12 mt-4">
-                        <fieldset>
-                            <legend  style="background-color: rgb(83, 151, 146);">FUEL SOURCE</legend>
-                            <div class="row">
-                            <div class="col-md-3">
-                            <input type="checkbox" name="lpg">LPG
-                            <input type="number" class="form-control" name="amt_lpg"  value="0" onclick="clearZeroValue(this)">
-                            </div>
-                            <div class="col-md-3">
-                                <input type="checkbox" name="elec">ELECTRIC
-                                <input type="number" class="form-control" name="m_amt_elec"  value="0" onclick="clearZeroValue(this)">
-                            </div>
-                            <div class="col-md-3">
-                                <input type="checkbox" name="char">CHARCOAL
-                                <input type="number" class="form-control" name="amt_char"  value="0" onclick="clearZeroValue(this)">
-                            </div>
-                            <div class="col-md-3">
-                                <input type="checkbox" name="fwood">FIREWOOD
-                                <input type="number" class="form-control" name="amt_fwood"  value="0" onclick="clearZeroValue(this)">
-                            </div>
-                            </div>
-                        </fieldset>
-                        </div>
-                        <div class="col-md-12 mt-4">
-    
-                     </div>       
-                </div>          
-        </fieldset>
-      
-        <fieldset>
-      
-                <div class="row m-2">
-                  
-                    <div class="col-md-4">
-                        <label>DURATION OF PROBLEM/SYMPTOMS:</label>
-                        <input type="text" class="form-control" name="duration_of_prob" value="NONE" onclick="clearZeroValue(this)">
-                    </div>
-    
-                    <div class="col-md-4">
-                        <label>PREVIOUS TREATMENT/DURATION:</label>
-                        <input type="text" class="form-control" name="prev_treatment" value="NONE" onclick="clearZeroValue(this)">
-                    </div>
-    
-                    <div class="col-md-4">
-                        <label>HEALTH ACCESSIBILITYA PROBLEM:</label>
-                        <input type="text" class="form-control" name="health_accessibility_prob" value="NONE" onclick="clearZeroValue(this)">
-                    </div>
-                </div>
-        </fieldset>
     </div>
         </fieldset>
     </fieldset>
-    <hr>
     <div class="col-md-12">
         <h4 class="float-right"><font color="red"> Always click the VERIFY BUTTON before saving UIS file. Thank you!</font></h4>
         <hr>
     </div>
        
-        <br>
-    <!-- <button style="color: rgb(231, 171, 56)" class="btn btn-success text-white float-right m-2">PRINT UIS</button> -->
-    <button type="submit" style="color: rgb(231, 171, 56)" class="btn btn-warning text-white float-right m-2">SAVE</button>
+        <br>  <br>
+    <button type="submit" style="color: rgb(231, 171, 56)" class="btn btn-warning text-white float-right m-2">SAVE UIS</button>
 
 </div>
 </form>
@@ -735,6 +505,7 @@ select{
     famcomosof_set_of_data = []
     set_of_mi = []
     set_of_mi_osof = []
+    set_reccom_amt = []
 
     function delArray(num){
         family_composition.splice(num,1);
@@ -857,7 +628,7 @@ select{
         document.getElementById('fam_mi_tot').value = total_sum_mi;
         }
     function clear_inputs(){
-        document.getElementById('cname').value = '';
+        // document.getElementById('cname').value = '';
         document.getElementById('mrtp').value = '';
         document.getElementById('mhea').value = '';
         document.getElementById('moccu').value = 'NONE';
@@ -877,7 +648,9 @@ clear_inputs();
         const outputDiv = document.getElementById('rtbody');
         outputDiv.innerHTML = ''; // Clear previous content
         document.getElementById('reccom_data').value='';
+        document.getElementById('reccom_amt_tot').value= 0;
         reccom_set_of_data = []
+        set_reccom_amt = []
     function updatereccom(){
             let new_recommendations = recommendations
             new_recommendations.forEach((data,index) => {
@@ -886,6 +659,14 @@ clear_inputs();
             mmoa = data[2];
             mfs = data[3];
             q =index;  
+
+            set_reccom_amt.push(parseFloat(maos))
+    total_sum_reccom = 0
+    for (let q = 0; q < set_reccom_amt.length; q++) {
+        total_sum_reccom += set_reccom_amt[q];
+        // console.log(total_sum_reccom)
+        document.getElementById('reccom_amt_tot').value = total_sum_reccom;
+        }
             
         reccomDataArray = {mtoa,maos,mmoa,mfs}
         reccom_set_of_data.push(reccomDataArray);
@@ -974,8 +755,15 @@ clear_inputs();
         row.appendChild(deleteButtonCell);
         rtbody.appendChild(row);
      
-
     }
+
+    set_reccom_amt.push(parseFloat(maos))
+    total_sum_reccom = 0
+    for (let q = 0; q < set_reccom_amt.length; q++) {
+        total_sum_reccom += set_reccom_amt[q];
+        // console.log(total_sum_reccom)
+        document.getElementById('reccom_amt_tot').value = total_sum_reccom;
+        }
 
     function clear_input(){
        

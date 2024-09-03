@@ -92,4 +92,23 @@ Patient Search
 });
 
 </script>
+
+{% for log in messages %}
+{% if log.tags == 'success' %}
+    <script>
+        var d = "{{ log }}";
+    swal("", d, "success");
+    </script>
+	{% elif log.tags == 'warning' %}
+	<script>
+        var d = "{{ log }}";
+    swal("OOOPS!", d, "warning");
+    </script>
+{% elif log.tags == 'error' %}
+<script>
+	var d = "{{ log }}";
+swal("OOOPS!", d, "warning");
+</script>
+   {% endif %}
+{% endfor %}
 {% endblock %}

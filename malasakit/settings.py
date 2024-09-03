@@ -78,7 +78,7 @@ WSGI_APPLICATION = 'malasakit.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE':'django.db.backends.mysql',
-        'NAME': 'uis_db',
+        'NAME': 'v2_uis_db',
         'USER':'root',
         'PASSWORD':'',
         'PORT':'3306',

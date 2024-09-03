@@ -4,6 +4,7 @@
 Unified Intake Sheet
 {% endblock %}
 {% block content %}
+
 <style>
 fieldset {
   background-color: #eeeeee;
@@ -64,8 +65,6 @@ select{
                     <label>Hospital No.</label>
                     <input type="text" readonly class="form-control" value="{{ hospno }}">
                 </div>  
-                    
-               
             </div>
         <fieldset>
             <legend>INFORMANT</legend>
@@ -370,12 +369,12 @@ select{
                         <div class="row m-2">
                         <div class="col-md-6">
                             <label title="CLICK ME TO GET THE TOTAL EXPENSE" onclick="get_total_expenses()"><b><font color="red">TOTAL EXPENSES:</font></b></label>
-                            <input title="CLICK ME TO GET THE TOTAL EXPENSE" onclick="get_total_expenses()" title="TOTAL EXPENSES" type="text" name="tot_expense" value="0"  id ="tot_exps" class="form-control">
+                            <input title="CLICK ME TO GET THE TOTAL EXPENSE" onclick="get_total_expenses()" title="TOTAL EXPENSES" type="number" name="tot_expense" id ="tot_exps" class="form-control" required>
                         </div>
 
                         <div class="col-md-6">
                             <label><b><font color="red">TOTAL INCOME:</font></b></label>
-                            <input title="TOTAL Income" type="text" name="tot_income" id ="tot_incomes" class="form-control" value="0">
+                            <input title="TOTAL Income" type="number" name="tot_income" id ="tot_incomes" class="form-control"  required>
                         </div>
                     </div>
 
@@ -432,13 +431,14 @@ select{
                 </select>
                 </div> 
                 <div class="col-md-12">
-                    <textarea spellcheck="true" name="swa" id="" class="form-control"  rows="5" oninput="this.value = this.value.toUpperCase()" required></textarea>
+                    <textarea spellcheck="true" name="swa" id="mytext" class="form-control"  rows="5" oninput="this.value = this.value.toUpperCase()" required></textarea>
                 </div>
             </div>
     </fieldset>
 
     <fieldset>
         <legend>VI. RECOMMENDATIONS (Rekomendasyon)</legend>
+        <input type="hidden" id="reccom_amt_tot" name="tot_reccom_amt" value="0">
         <a href="#" class="btn btn-success float-right m-2"  data-toggle="modal" data-target="#recomModal">ADD</a>
         <input type="hidden" class="form-control" name="reccomdata" id="reccom_data">
         {% include 'includes/reccomendations.html' %}
@@ -779,6 +779,7 @@ select{
     famcomosof_set_of_data = []
     set_of_mi = []
     set_of_mi_osof = []
+    set_reccom_amt = []
 
     function delArray(num){
         family_composition.splice(num,1);
@@ -901,7 +902,7 @@ select{
         document.getElementById('fam_mi_tot').value = total_sum_mi;
         }
     function clear_inputs(){
-        document.getElementById('cname').value = '';
+        // document.getElementById('cname').value = '';
         document.getElementById('mrtp').value = '';
         document.getElementById('mhea').value = '';
         document.getElementById('moccu').value = 'NONE';
@@ -921,7 +922,9 @@ clear_inputs();
         const outputDiv = document.getElementById('rtbody');
         outputDiv.innerHTML = ''; // Clear previous content
         document.getElementById('reccom_data').value='';
+        document.getElementById('reccom_amt_tot').value= 0;
         reccom_set_of_data = []
+        set_reccom_amt = []
     function updatereccom(){
             let new_recommendations = recommendations
             new_recommendations.forEach((data,index) => {
@@ -931,6 +934,14 @@ clear_inputs();
             mfs = data[3];
             q =index;  
             
+    set_reccom_amt.push(parseFloat(maos))
+    total_sum_reccom = 0
+    for (let q = 0; q < set_reccom_amt.length; q++) {
+        total_sum_reccom += set_reccom_amt[q];
+        // console.log(total_sum_reccom)
+        document.getElementById('reccom_amt_tot').value = total_sum_reccom;
+        }
+
         reccomDataArray = {mtoa,maos,mmoa,mfs}
         reccom_set_of_data.push(reccomDataArray);
         let recArray = JSON.stringify(reccom_set_of_data);
@@ -1018,8 +1029,15 @@ clear_inputs();
         row.appendChild(deleteButtonCell);
         rtbody.appendChild(row);
      
-
     }
+
+    set_reccom_amt.push(parseFloat(maos))
+    total_sum_reccom = 0
+    for (let q = 0; q < set_reccom_amt.length; q++) {
+        total_sum_reccom += set_reccom_amt[q];
+        // console.log(total_sum_reccom)
+        document.getElementById('reccom_amt_tot').value = total_sum_reccom;
+        }
 
     function clear_input(){
        
@@ -1253,4 +1271,5 @@ clear_inputs();
         }
 
     </script>
+ 
 {% endblock %}

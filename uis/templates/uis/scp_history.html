@@ -1,0 +1,71 @@
+{% extends 'main_base.html' %}
+{% load static %}
+{% block title %}
+Patient History
+{% endblock %}
+{% block content %}
+<div class="row">
+<div class="col-md-12"> 
+     <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h4 class="m-0 font-weight-bold" style="color: rgb(231, 171, 56)">Patient History (SOCIAL PROFILE WITH SOCIAL CARE PLAN)</h4>
+            {% if scp %}
+            {% else %}
+           <a href="{% url 'add_scp' uis uis_miscs mssats %}" class="btn btn-primary float-right">ADD SCP</a>
+            {% endif %}
+        </div>
+        <div class="m-5"><h5>Patient Name:&nbsp;&nbsp;<b><font color="blue">{{ fullname }}</font> - ({{ hospno }})</b></h5></div>
+
+       
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover table-striped" id="date_charge" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Classification</th>
+                            <th>Informant</th>
+                            <th>TOE</th>
+                            <th class="text-center">Action</th>
+               
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if scp %}
+                        {% for i in mssat %}
+                        <tr >
+                            <td>
+                                {{ i.uis.date }}
+                            </td>
+                            <td>
+                              {{ i.uis_misc.category}}
+                            </td>
+                            <td> 
+                            {% for g in informant %}
+                                {% if i.uis_misc == g.uis_misc %}
+                                    {{ g.fullname }}
+                                {% endif %}
+                            {% endfor %}
+                            </td>
+                            <td>{{ i.uis_misc.toe }}</td>
+
+                           <td class="text-center">
+                            <a href="{% url 'edit_scp' i.mssat %}"  class="btn btn-danger">EDIT SCP</a>
+                            <a href="{% url 'add_scp' i.uis_id i.uis_misc_id i.mssat %}"  class="btn btn-warning">ADD SCP</a>
+                             <a href="{% url 'psycoProfile' i.uis_id i.uis_misc_id i.mssat %}" target="_blank" class="btn btn-success">PRINT SCP</a>
+                        
+                            </td>
+                           
+                        </tr>
+                        {% endfor %}
+                        {% else %}
+                        <h3><font color="red">NO PATIENT'S HISTORY FOUND</font></h3>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+{% endblock %}

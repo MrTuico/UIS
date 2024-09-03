@@ -36,8 +36,9 @@ legend {
           </div>
           {% endif%}
        <div class="card-body">
-        <form action="{% url 'add_mssat' uis %}" method="POST">
+        <form action="" method="POST">
             {% csrf_token %}
+            
     <fieldset>
         <legend>DEMOGRAPHIC DATA</legend>
         <div class="row m-4">

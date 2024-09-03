@@ -27,7 +27,8 @@ Patient Search
                         <tr>
                             <th>DATE OF INTAKE</th>
                             <th>PATIENT NAME</th>
-                            <th>Unified Intake Sheet</th>
+                            <th class="text-center">PATIENT'S HISTORY</th>
+                  
                    
                         </tr>
                     </thead>
@@ -48,19 +49,11 @@ Patient Search
                                 {% endif %}
                                 {% endfor %}
                             </td>
-                            <td class="text-center">
-                                {% for u in uis %}
-                                {% if u.uis == s.uis_id %}
-                                <a href="{% url 'uis_pdf' u.uis %}" target="_blank" class="btn btn-success">PRINT</a>
-                                <a href="{% url 'update_uis' u.uis %}"  class="btn btn-warning">VIEW</a>
-                                <a href="{% url 'duplicate_uis' u.uis %}"  class="btn btn-secondary">COPY</a>
-                                {% if user_id == 'JMZ' %}
-                                   <a href="{% url 'delete_uis' u.uis %}"  class="btn btn-danger">DELETE</a>
-                               {% endif %}
-                                {% endif %}
-                                {% endfor %}
-                            </td>
-                           
+                                <td class="text-center">
+                                    <a href="{% url 'get_patient_uis_to_mssat' s.uis_id s.uis.hospno %}"class="btn btn-success">VIEW UIS</a>
+                                    <a href="{% url 'get_patient_uis_to_mssat_history' s.uis_id s.uis.hospno %}"class="btn btn-warning">VIEW MSS TOOL LIST</a>
+
+                                </td>
                           </tr>
                         {% endfor %}
                     </tbody>

@@ -1,0 +1,74 @@
+{% extends 'main_base.html' %}
+{% load static %}
+{% block title %}
+Admitted Patient
+{% endblock %}
+{% block content %}
+<div class="row">
+<div class="col-md-12"> 
+     <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold" style="color: rgb(231, 171, 56)">ADMITTED PATIENT LIST</h6>
+        </div>
+      
+        <div class="row m-2">
+            <div class="col-md-5"></div><div class="col-md-4"></div>
+            <div class="col-md-3 ">
+                <input type="text" class="form-control float-right" id="searchInput" placeholder="Search">  
+            </div>
+           </div>
+         <div class="card-body">
+            <div class="table-responsive">
+              <table class="table table-bordered table-hover table-striped" id="dt"  width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>No.</th>
+                            <th>DATE ADMITTED</th>
+                            <th>PATIENT NAME</th>
+                            <th>COMPLAIN</th>
+                            <th>WARD AND ROOM NO.</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for i in adm_patient %}
+                        <tr  class="clickable-row"  data-href="{% url 'get_patient_history' i.hpercode i.enccode adm %}" id="cursor">
+
+                            <td>{{ forloop.counter }}</td>
+                                <td>
+                                    {{i.admdate}}
+                                </td>
+                                <td>{{ i.patlast }}, {{ i.patfirst }} {{ i.patmiddle }}</td>
+                                <td>{{ i.admtxt }}</td>
+                                <td>{{ i.wardname }} - {{ i.rmname }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+</div> 
+<script>
+const searchInput = document.getElementById('searchInput');
+const table = document.getElementById('dt');
+const tbody = table.getElementsByTagName('tbody')[0];
+searchInput.addEventListener('input', function() {
+    const filter = searchInput.value.toLowerCase();
+    const rows = tbody.getElementsByTagName('tr');
+    for (let i = 0; i < rows.length; i++) {
+        const cells = rows[i].getElementsByTagName('td');
+        let match = false;
+        for (let j = 0; j < cells.length; j++) {
+            if (cells[j].textContent.toLowerCase().includes(filter)) {
+                match = true;
+                break;
+            }
+        }
+        rows[i].style.display = match ? '' : 'none';
+    }
+});
+
+</script>
+
+{% endblock %}

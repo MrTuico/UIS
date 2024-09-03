@@ -34,7 +34,7 @@ legend {
 <div class="col-md-12"> 
      <div class="card shadow mb-4">
         <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold" style="color: rgb(231, 171, 56)">UNIFIED INTAKE SHEET (UPDATE)</h6>
+            <h6 class="m-0 font-weight-bold" style="color: rgb(231, 171, 56)">UNIFIED INTAKE SHEET (ADD)</h6>
         </div>
         {% if messages %}
         <div id="myAlert" class="alert">
@@ -44,18 +44,24 @@ legend {
           </div>
           {% endif%}
        <div class="card-body">
-        <form onkeydown="return event.key != 'Enter';" action="{% url 'process_update_uis' id_uis %}" method="POST">
+        <form onkeydown="return event.key != 'Enter';" target="_blank" action="{% url 'process_update_uis' id_uis %}" method="POST">
             {% csrf_token %}
             <div class="row m-2 mb-4">
-                <div class="col-md-6">
+                <div class="col-md-4">
                     <label>Philhealth Identification No</label>
                     <input type="text" class="form-control" name="phil_no" value="{{ uis_details.phil_no }}">
                 </div>   
+
+                <div class="col-md-2">
+                    <label>TOE</label>
+                    <input type="text" oninput="this.value = this.value.toUpperCase()" class="form-control" name="toed" value="{{ uis_miscs.toe }}">
+                </div>  
                 <div class="col-md-6">
                     <label>Hospital No</label>
                     <input type="text" readonly class="form-control" value="{{ uis_details.hospno }}">
                 </div>
             </div>
+            <input type="text" hidden name="toe" value="{{ uis_miscs.toe }}">
         <fieldset>
             <legend>INFORMANT</legend>
             <input type="hidden" value="{{ informant.informant }}" name="informant_upd">
@@ -228,7 +234,7 @@ legend {
                         <td>{{ famcom.occupation }}</td>
                         <td>{{ famcom.mi }}</td>
                         <td>{{ famcom.age }}</td>
-                        <td><a href="{% url 'del_famcom' id_uis famcom.familyComposition %}" ><i class="fa fa-trash"></i></a></td>
+                        <td><a href="{% url 'del_famcom' id_uis famcom.familyComposition uis_miscs.uis_misc %}" ><i class="fa fa-trash"></i></a></td>
                     </tr>
                     {% endfor %}
                     {% endif %}
@@ -256,7 +262,7 @@ legend {
                         <tr>
                             <td>{{ famcom_osof.otherSources_of_fi_desc }}</td>
                             <td>{{ famcom_osof.otherSources_of_fi }}</td>
-                            <td ><a href="{% url 'del_famcom_osof' id_uis famcom_osof.fc_other_source %}"><i class="fa fa-trash"></i></a></td>
+                            <td ><a href="{% url 'del_famcom_osof' id_uis famcom_osof.fc_other_source  uis_miscs.uis_misc %}"><i class="fa fa-trash"></i></a></td>
                            
                         </tr>
                         {% endfor %}
@@ -513,7 +519,7 @@ legend {
                 <div class="col-md-4">
                     {% if fproblem.0 == 'HCOP' %}
                     <input type="checkbox" checked name="hcop">HEALTH CONDITION OF PATIENT(specify)
-                    <input type="text" value="{{f_prob_desc.0 }}" oninput="this.value = this.value.toUpperCase()" id="comaR" class="form-control" name="hcop_desc">
+                    <input type="text" value="{{ complain }}" oninput="this.value = this.value.toUpperCase()" id="comaR" class="form-control" name="hcop_desc">
                     {% else %}
                     <input type="checkbox"  name="hcop">HEALTH CONDITION OF PATIENT(specify)
                     <input type="text" value="" oninput="this.value = this.value.toUpperCase()" id="comaR" class="form-control" name="hcop_desc">
@@ -581,9 +587,9 @@ legend {
                 <input type="hidden"  name="swa_upd" value="{{ swa_desc.swa }}">
                 <div class="col-md-8 mb-5">
                     <label>Chief Complain</label>
-                    {% if fproblem.0 == 'HCOP' %}
-                    <input type="text" value="{{f_prob_desc.0 }}" class="form-control">
-                    {% endif %}
+                
+                    <input type="text" value="{{ complain }}" class="form-control">
+                 
                 </div> 
 
                 <div class="col-md-4 mb-3">
@@ -607,6 +613,7 @@ legend {
 
     <fieldset>
         <legend>VI. RECOMMENDATIONS (Rekomendasyon)</legend>
+        <input type="hidden" id="reccom_amt_tot" name="tot_reccom_amt" value="0">
         <a href="#" class="btn btn-success float-right m-2"  data-toggle="modal" data-target="#recomModal">ADD</a>
         <input type="hidden" class="form-control" name="reccomdata" id="reccom_data">
         {% include 'includes/reccomendations.html' %}
@@ -625,17 +632,7 @@ legend {
                     </thead>
                     <tbody id="rtbody">
                     </tbody>
-                    {% if reccom %}
-                    {% for reccom in reccom %}
-                    <tr>
-                        <td>{{ reccom.type_of_assistance }}</td>
-                        <td>{{ reccom.amt_of_assistance }}</td>
-                        <td>{{ reccom.mode_of_assistance }}</td>
-                        <td>{{ reccom.fund_source }}</td>
-                        <td><a href="{% url 'del_reccom' id_uis reccom.recommendation %}"><i class="fa fa-trash"></i></a></td>
-                    </tr>
-                    {% endfor %}
-                    {% endif %}
+                
                   </table>
 
                 </div>
@@ -650,9 +647,8 @@ legend {
     </div>
        
         <br>
-    <!-- <button style="color: rgb(231, 171, 56)" class="btn btn-success text-white float-right m-2">PRINT UIS</button> -->
-    <a href="{% url 'uis_pdf' id_uis %}" target="_blank" class="btn btn-primary float-right m-2" >PRINT</a>
-    <button type="submit" style="color: rgb(231, 171, 56)" class="btn btn-warning text-white float-right m-2">UPDATE UIS</button>
+  
+    <button type="submit" style="color: rgb(231, 171, 56)" class="btn btn-warning text-white float-right m-2">SAVE UIS</button>
 
 </div>
 </form>
@@ -676,6 +672,7 @@ legend {
     famcomosof_set_of_data = []
     set_of_mi = []
     set_of_mi_osof = []
+    set_reccom_amt = []
     
     function delArray(num){
         family_composition.splice(num,1);
@@ -819,7 +816,9 @@ clear_inputs();
         const outputDiv = document.getElementById('rtbody');
         outputDiv.innerHTML = ''; // Clear previous content
         document.getElementById('reccom_data').value='';
+        document.getElementById('reccom_amt_tot').value= 0;
         reccom_set_of_data = []
+        set_reccom_amt = []
     function updatereccom(){
             let new_recommendations = recommendations
             new_recommendations.forEach((data,index) => {
@@ -828,6 +827,14 @@ clear_inputs();
             mmoa = data[2];
             mfs = data[3];
             q =index;  
+
+            set_reccom_amt.push(parseFloat(maos))
+    total_sum_reccom = 0
+    for (let q = 0; q < set_reccom_amt.length; q++) {
+        total_sum_reccom += set_reccom_amt[q];
+        // console.log(total_sum_reccom)
+        document.getElementById('reccom_amt_tot').value = total_sum_reccom;
+        }
             
         reccomDataArray = {mtoa,maos,mmoa,mfs}
         reccom_set_of_data.push(reccomDataArray);
@@ -897,6 +904,13 @@ clear_inputs();
         rtbody.appendChild(row);
     }
 
+    set_reccom_amt.push(parseFloat(maos))
+    total_sum_reccom = 0
+    for (let q = 0; q < set_reccom_amt.length; q++) {
+        total_sum_reccom += set_reccom_amt[q];
+        // console.log(total_sum_reccom)
+        document.getElementById('reccom_amt_tot').value = total_sum_reccom;
+        }
     function clear_input(){
        
         document.getElementById('maos').value = '';

@@ -61,32 +61,14 @@
                         <input type="text" class="form-control" id="cname" oninput="this.value = this.value.toUpperCase()" >
                         <label>Gender</label>
                         <input type="text" class="form-control" oninput="this.value = this.value.toUpperCase()" id="mgender">
-                       <!-- <select id="mgender" class="form-control">
-                        <option value="MALE">MALE</option>
-                        <option value="FEMALE">FEMALE</option>
-                       </select> -->
                        <label>Civilstatus</label>
                        <input type="text" class="form-control" oninput="this.value = this.value.toUpperCase()" id="mcstat">
-                       <!-- <select id="mcstat" class="form-control">
-                        <option value="SINGLE">SINGLE</option>
-                        <option value="MARRIED">MARRIED</option>
-                        <option value="DIVORCED">DIVORCED</option>
-                        <option value="WIDOWED">WIDOWED</option>
-                        <option value="LIVED IN">LIVED IN</option>
-                       </select> -->
                        <label>Age</label>
                         <input type="number" class="form-control" id="mage" value="0">
                         <label>Relation to Patient</label>
                         <input type="text" class="form-control" id="mrtp" oninput="this.value = this.value.toUpperCase()" >
                         <label>Highest Educational Attainment</label>
                         <input type="text" id="mhea" oninput="this.value = this.value.toUpperCase()" class="form-control">
-                        <!-- <select id="mhea" class="form-control">
-                            <option value="POST-GRADUATE">POST-GRADUATE</option>
-                            <option value="COLLEGE">COLLEGE</option>
-                            <option value="HIGH SCHOOL">HIGH SCHOOL</option>
-                            <option value="ELEMENTARY">ELEMENTARY</option>
-                            <option value="NONE">NONE</option>
-                        </select> -->
                         <label>Occupation</label>
                         <input type="text" class="form-control" value="NONE" id="moccu" oninput="this.value = this.value.toUpperCase()" >
                         <label>Monthly Income</label>
@@ -117,19 +99,10 @@
                     <input type="text" class="form-control" id="mrtp" oninput="this.value = this.value.toUpperCase()" >
                     <label>Highest Educational Attainment</label>
                     <input type="text" id="mhea" oninput="this.value = this.value.toUpperCase()" class="form-control">
-                    <!-- <select id="mhea" class="form-control">
-                        <option value="POST-GRADUATE">POST-GRADUATE</option>
-                        <option value="COLLEGE">COLLEGE</option>
-                        <option value="HIGH SCHOOL">HIGH SCHOOL</option>
-                        <option value="ELEMENTARY">ELEMENTARY</option>
-                        <option value="NONE">NONE</option>
-                    </select> -->
                     <label>Occupation</label>
                     <input type="text" class="form-control" value="NONE" id="moccu" oninput="this.value = this.value.toUpperCase()" >
                     <label>Monthly Income</label>
                     <input type="number" class="form-control" id="mim" value="0">
-
-              
                 {% endif %}
                 {% if fc_datas %}
                 <div class="col-md-6">
@@ -171,9 +144,7 @@
                             <tr>
                                 <th>NAME</th>
                                 <th hidden>GENDER</th>
-                               
                                 <th hidden>CIVILSTATUS</th>
-                              
                                 <th hidden>RTP</th>
                                 <th hidden>HEA</th>
                                 <th hidden>OCCUPATION</th>

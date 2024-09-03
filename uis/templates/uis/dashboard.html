@@ -6,9 +6,13 @@ Patient Search
 {% endblock %}
 {% block content %}
 
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.0.2/dist/chart.min.js"></script>
+
 <div class="d-sm-flex align-items-center justify-content-between mb-4">
     <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
-    <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
+    <a href="{% url 'report' %}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
             class="fas fa-download fa-sm text-white-50"></i> Generate Report</a>
 </div>
   <!-- Content Row -->
@@ -73,96 +77,55 @@ Patient Search
     </div>
 
 <hr>
-    <div class="card-body">
-        <div class="table-responsive">
-            <table class="table table-bordered table-hover table-striped" id="dt" width="100%" cellspacing="0">
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Age</th>
-                        <th title="MALE">M</th>
-                        <th title="FEMALE">F</th>
-                        <th>VAWC</th>
-                        <th title="INDIGENOUS PEOPLE">IP</th>
-                        <th title="SENIOR CITIZEN">SC</th>
-                        <th>PWD</th>
-                        <th title="SOLO PARENT">SP</th>
-                        <th>4Ps</th>
-                        <th title="BARANGAY OFFICIAL">BO</th>
-                        <th title="BARANGAY OFFICIAL DEP">BOD</th>
-                        <th>BHW</th>
-                        <th title="HEALTH WORKER EMPLOYEE">HWE</th>
-                        <th title="GOVERNMENT EMPLOYEE">GE</th>
-                        <th title="NATIONAL ATHLETE">NA</th>
-                        <th title=""></th>
-                        <th title="PDL/ INMATE">PDL</th>
-                        <th>CICL</th>
-                        <th title="FAMILY HEAD AND OTHER NEEDY ADULT">FHAONA</th>
-                        <th>PERSONNEL</th>
-                        <th title="PERSONNEL DEPENDENT">PD</th>
-                        <th title="PHIC">B</th>
-                        <th title="PHIC">C1</th>
-                        <th title="PHIC">C2</th>
-                        <th title="PHIC">C3</th>
-                        <th title="NON-PHIC">B</th>
-                        <th title="NON-PHIC">C1</th>
-                        <th title="NON-PHIC">C2</th>
-                        <th title="NON-PHIC">C3</th>
-                        <th title="POS">FI</th>
-                        <th title="POS">FC</th>
-                        <th>REMARKS</th>
-                        
-                        
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for cl in uis %}
-               <tr>
-                <td>
-                    {% for p in patient_uis %}
-                        {% if cl.uis_id == p.uis_id %}
-                            {{ p.client_name }}
-                        {% endif %}
-                    {% endfor %}
-                </td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-               </tr>
-               {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    </div>
+<div class="col-md-12">
+    <canvas id="myChart" class="m-5" width="100%" height="30%"></canvas>
+        <script>
+        var ctx = document.getElementById('myChart').getContext('2d');
+        var myChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: [ 
+                "{% for uis_id , asst_amt in asst_amt %}",
+                   "{{ uis_id }}",
+                "{% endfor %}",],
+
+                datasets: [{
+                    label: 'AMOUNT OF ASSISTANCE DAILY MONITORING',
+                    data: [ "{% for date , asst_amt in asst_amt %}","{{ asst_amt }}","{% endfor %}",],
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.8)',
+                        'rgba(54, 162, 235, 0.8)',
+                        'rgba(255, 206, 86, 0.8)',
+                        'rgba(75, 192, 192, 0.8)',
+                        'rgba(153, 102, 255, 0.8)',
+                        'rgba(255, 159, 64, 0.8)',
+                        'rgba(240, 120, 50, 0.8)',
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)',
+                        'rgba(255, 159, 64, 1)',
+                        'rgba(240, 120, 50, 1)',
+
+                    ],
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+        </script>
+</div>
+
+
  
 </div>
 

@@ -10,28 +10,27 @@
     <li class="nav-item active">
         <a class="nav-link" href="/">
             <i class="fas fa-users"></i>
-            <span>Patient Search</span></a>
+            <span>OPD</span></a>
     </li>
+    <li class="nav-item active">
+        <a class="nav-link" href="{% url 'admitted_list' %}">
+            <i class="fas fa-users"></i>
+            <span>IN-PATIENT</span></a>
+    </li>
+
     <hr class="sidebar-divider">
     <div class="sidebar-heading">
         Navigations
     </div>
     <li class="nav-item">
+        <a class="nav-link" href="{% url 'mss_tool_list' %}">
+            <i class="fas fa-users"></i>
+            <span><b>MSSAT LIST</b></span></a>
+    </li>
+    <li class="nav-item">
         <a class="nav-link" href="{% url 'uis_list' %}">
             <i class="fas fa-list"></i>
             <span>UIS List</span></a>
-    </li>
-
-    <li class="nav-item">
-        <a class="nav-link" href="{% url 'mss_tool_list' %}">
-            <i class="fas fa-list"></i>
-            <span>MSS Tool</span></a>
-    </li>
-
-    <li class="nav-item">
-        <a class="nav-link" href="{% url 'scsr_list' %}">
-            <i class="fas fa-list"></i>
-            <span>SOCIAL PROFILE</span></a>
     </li>
 
     <li class="nav-item">
@@ -43,6 +42,12 @@
         <a class="nav-link" href="{% url 'walkin_page' %}">
             <i class="fas fa-list"></i>
             <span>Walk-In</span></a>
+    </li>   
+
+    <li class="nav-item">
+        <a class="nav-link" href="{% url 'report' %}">
+            <i class="fas fa-list"></i>
+            <span>Generate Report</a>
     </li>
     <div class="text-center d-none d-md-inline">
         <button class="rounded-circle border-0" id="sidebarToggle"></button>

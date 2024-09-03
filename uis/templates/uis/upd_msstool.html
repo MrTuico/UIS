@@ -265,7 +265,7 @@ select{
     </fieldset>
     </fieldset>
     <hr>
-    <a href="{% url 'new_mssat_pdf' mssat_details.uis_id %}" target="_blank" class="btn btn-primary float-right m-2" >PRINT</a>
+    <a href="{% url 'new_mssat_pdf' mssat_details.uis_id mssat_details.uis_misc_id %}" target="_blank" class="btn btn-primary float-right m-2" >PRINT</a>
     <button type="submit" style="color: rgb(231, 171, 56)" class="btn btn-warning text-white float-right m-2">UPDATE</button>
 </div>
 </form>

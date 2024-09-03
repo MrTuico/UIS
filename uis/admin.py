@@ -1,5 +1,5 @@
 from django.contrib import admin
-from . models import UIS,Informant,IdentifyingInformation,FamilyComposition,ListofExpenses,ProblemPresented,SWA,Recommendations
+from . models import *
 
 
 
@@ -30,9 +30,18 @@ class SwaAdmin(admin.ModelAdmin):
 class RecommendationsAdmin(admin.ModelAdmin):
     list_display = ['recommendation']
     search_fields = ['recommendation']
+
+class MSSATAdmin(admin.ModelAdmin):
+    list_display = ['mssat']
+    search_fields = ['mssat']
     
+class SCPAdmin(admin.ModelAdmin):
+    list_display = ['scp']
+    search_fields = ['scp']
 
 admin.site.register(UIS, UisAdmin)
+admin.site.register(MSSAT, MSSATAdmin)
+admin.site.register(SCP, SCPAdmin)
 admin.site.register(Informant, InformantAdmin)
 admin.site.register(IdentifyingInformation, IdentifyingInformationAdmin)
 admin.site.register(FamilyComposition,FamilyCompositionAdmin)
